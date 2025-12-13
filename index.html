@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Portfolio | Minh Thư</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
+        body { background: #f5f7fa; color: #333; line-height: 1.6; }
+        header { background: #1e293b; color: #fff; padding: 60px 20px; text-align: center; }
+        header h1 { font-size: 40px; margin-bottom: 10px; }
+        header p { font-size: 18px; opacity: 0.9; }
+
+        nav { background: #0f172a; padding: 10px; text-align: center; }
+        nav a { color: #fff; margin: 0 15px; text-decoration: none; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+
+        section { max-width: 1000px; margin: auto; padding: 60px 20px; }
+        section h2 { font-size: 32px; margin-bottom: 20px; color: #1e293b; }
+
+        .about p { font-size: 18px; max-width: 700px; }
+
+        .skills ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; list-style: none; }
+        .skills li { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+
+        .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .project { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .project h3 { margin-bottom: 10px; color: #0f172a; }
+
+        .contact p { font-size: 18px; }
+        .contact a { color: #2563eb; text-decoration: none; }
+
+        footer { background: #0f172a; color: #fff; text-align: center; padding: 20px; margin-top: 40px; }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 30px; }
+            section h2 { font-size: 26px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Minh Thư</h1>
+    <p>Web Developer | Cloud & AI Enthusiast</p>
+</header>
+
+<nav>
+    <a href="#about">Giới thiệu</a>
+    <a href="#skills">Kỹ năng</a>
+    <a href="#projects">Dự án</a>
+    <a href="#contact">Liên hệ</a>
+</nav>
+
+<section id="about" class="about">
+    <h2>Giới thiệu</h2>
+    <p>
+        Tôi là một sinh viên / lập trình viên yêu thích công nghệ web, cloud computing và trí tuệ nhân tạo.
+        Tôi có kinh nghiệm xây dựng website tĩnh, hệ thống quản lý bằng Laravel và các dự án IoT – Smart Home.
+    </p>
+</section>
+
+<section id="skills" class="skills">
+    <h2>Kỹ năng</h2>
+    <ul>
+        <li>HTML, CSS, JavaScript</li>
+        <li>Laravel, PHP, MySQL</li>
+        <li>Bootstrap, Tailwind CSS</li>
+        <li>Cloud Computing, Cloudflare</li>
+        <li>Python, Machine Learning</li>
+        <li>ESP32, IoT, MQTT</li>
+    </ul>
+</section>
+
+<section id="projects">
+    <h2>Dự án</h2>
+    <div class="projects">
+        <div class="project">
+            <h3>Hệ thống quản lý nội thất</h3>
+            <p>Website quản lý thiết bị nội thất sử dụng Laravel, DataTables và Ajax.</p>
+        </div>
+        <div class="project">
+            <h3>Smart Home ESP32</h3>
+            <p>Hệ thống nhà thông minh tích hợp cảm biến, MQTT và Telegram.</p>
+        </div>
+        <div class="project">
+            <h3>Nhận diện bệnh phổi</h3>
+            <p>Ứng dụng Deep Learning với ResNet, DenseNet trên tập NIH Chest X-ray.</p>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="contact">
+    <h2>Liên hệ</h2>
+    <p>Email: <a href="mailto:minhthu@example.com">minhthu@example.com</a></p>
+    <p>GitHub: <a href="#">github.com/minhthu</a></p>
+</section>
+
+<footer>
+    <p>© 2025 Minh Thư. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
