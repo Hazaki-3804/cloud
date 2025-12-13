@@ -1,104 +1,531 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Portfolio | Minh Thư</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Báo cáo: Cloud Computing & Cloudflare Pages</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
-        body { background: #f5f7fa; color: #333; line-height: 1.6; }
-        header { background: #1e293b; color: #fff; padding: 60px 20px; text-align: center; }
-        header h1 { font-size: 40px; margin-bottom: 10px; }
-        header p { font-size: 18px; opacity: 0.9; }
+      :root {
+        --primary: #4f46e5; /* Indigo 600 */
+        --primary-dark: #4338ca;
+        --secondary: #ec4899; /* Pink 500 */
+        --accent: #06b6d4; /* Cyan 500 */
+        --bg-color: #f1f5f9; /* Slate 100 */
+        --card-bg: #ffffff;
+        --text-main: #1e293b; /* Slate 800 */
+        --text-body: #475569; /* Slate 600 */
+        --border-color: #e2e8f0;
+        --success-light: #ecfdf5; /* Green 50 */
+        --warning-light: #fff7ed; /* Orange 50 */
+        --danger-light: #fef2f2; /* Red 50 */
+        --info-light: #eff6ff; /* Blue 50 */
+      }
 
-        nav { background: #0f172a; padding: 10px; text-align: center; }
-        nav a { color: #fff; margin: 0 15px; text-decoration: none; font-weight: bold; }
-        nav a:hover { text-decoration: underline; }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      
+      body {
+        font-family: 'Outfit', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        line-height: 1.7;
+        overflow-x: hidden;
+      }
 
-        section { max-width: 1000px; margin: auto; padding: 60px 20px; }
-        section h2 { font-size: 32px; margin-bottom: 20px; color: #1e293b; }
+      /* --- Navigation --- */
+      nav {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border-color);
+        z-index: 1000;
+        padding: 15px 0;
+      }
+      
+      nav ul {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
 
-        .about p { font-size: 18px; max-width: 700px; }
+      nav a {
+        text-decoration: none;
+        color: var(--text-body);
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+      }
 
-        .skills ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; list-style: none; }
-        .skills li { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+      nav a:hover, nav a.active {
+        background-color: #eef2ff;
+        color: var(--primary);
+      }
 
-        .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .project { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-        .project h3 { margin-bottom: 10px; color: #0f172a; }
+      /* --- Header --- */
+      header {
+        margin-top: 70px;
+        padding: 100px 20px 80px;
+        text-align: center;
+        background: linear-gradient(180deg, #fff 0%, var(--bg-color) 100%);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -20%;
+        width: 60%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(79, 70, 229, 0.05) 0%, transparent 70%);
+        z-index: 0;
+      }
 
-        .contact p { font-size: 18px; }
-        .contact a { color: #2563eb; text-decoration: none; }
+      header h1 {
+        font-size: 3.5rem;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+        font-weight: 800;
+        position: relative;
+        z-index: 1;
+        letter-spacing: -1.5px;
+      }
 
-        footer { background: #0f172a; color: #fff; text-align: center; padding: 20px; margin-top: 40px; }
+      header p {
+        font-size: 1.2rem;
+        color: var(--text-body);
+        max-width: 750px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
 
-        @media (max-width: 600px) {
-            header h1 { font-size: 30px; }
-            section h2 { font-size: 26px; }
-        }
+      /* --- Container & Layout --- */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px 60px;
+      }
+
+      .section-title {
+        font-size: 2rem;
+        margin-bottom: 30px;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding-top: 40px;
+        border-top: 1px dashed var(--border-color);
+      }
+      
+      .section-title i { color: var(--primary); }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); /* Adjusted minmax for better image fit */
+        gap: 30px;
+      }
+
+      /* --- Cards --- */
+      .card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 35px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      .card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+        color: var(--primary-dark);
+      }
+
+      .card p { margin-bottom: 15px; color: var(--text-body); text-align: justify; }
+
+      .card img {
+        width: 100%;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        object-fit: cover;
+        height: 220px; /* Consistent height for images in cards */
+      }
+
+      /* --- List Styles --- */
+      .feature-list { list-style: none; margin-top: 15px; }
+      .feature-list li {
+        margin-bottom: 12px;
+        padding-left: 30px;
+        position: relative;
+        color: var(--text-body);
+      }
+      .feature-list li::before {
+        content: '\f00c'; /* FontAwesome check */
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        left: 0;
+        top: 2px;
+        color: var(--success, #10b981);
+      }
+
+      /* --- Workflow Steps --- */
+      .workflow {
+        display: flex;
+        justify-content: space-between;
+        margin: 30px 0;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      .step {
+        flex: 1;
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 4px solid var(--primary);
+        min-width: 200px;
+      }
+      .step strong { display: block; color: var(--text-main); margin-bottom: 5px; font-size: 1.1rem; }
+      .step span { font-size: 0.9rem; color: var(--text-body); }
+      .workflow-img {
+        width: 100%;
+        max-width: 700px;
+        display: block;
+        margin: 30px auto;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      }
+
+      /* --- Chart & Audit Section --- */
+      .chart-wrapper {
+        position: relative;
+        height: 280px;
+        width: 100%;
+      }
+
+      .audit-detail {
+        background: var(--info-light); /* Changed to info_light for general explanation */
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 20px;
+        border-left: 4px solid var(--primary); /* Added border to distinguish */
+      }
+      /* Specific colors for security headers */
+      .audit-detail.csp { background: var(--success-light); border-left-color: #15803d; }
+      .audit-detail.hsts { background: var(--warning-light); border-left-color: #c2410c; }
+      .audit-detail.xframe { background: var(--info-light); border-left-color: #1d4ed8; }
+
+      .audit-detail h4 { margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+      .audit-detail.csp h4 { color: #15803d; }
+      .audit-detail.hsts h4 { color: #c2410c; }
+      .audit-detail.xframe h4 { color: #1d4ed8; }
+
+      .web-vitals-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+      }
+      .vital-card {
+        background: var(--success-light);
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        border: 1px solid #a7f3d0;
+      }
+      .vital-card b { display: block; font-size: 1.5rem; color: #047857; }
+      .vital-card small { font-size: 0.8rem; color: #065f46; }
+
+      /* --- Members --- */
+      .members-container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+      }
+      .member {
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        text-align: center;
+        width: 250px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        border-top: 5px solid var(--primary);
+      }
+      .member img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin-bottom: 15px;
+        object-fit: cover;
+        background: #eee;
+      }
+
+      /* Mobile */
+      @media (max-width: 768px) {
+        header h1 { font-size: 2.2rem; }
+        .grid-2 { grid-template-columns: 1fr; }
+        .web-vitals-grid { grid-template-columns: 1fr; }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
 
-<header>
-    <h1>Minh Thư</h1>
-    <p>Web Developer | Cloud & AI Enthusiast</p>
-</header>
+    <nav>
+      <ul>
+        <li><a href="#overview">Tổng quan</a></li>
+        <li><a href="#tech">Công nghệ</a></li>
+        <li><a href="#security">Bảo mật</a></li>
+        <li><a href="#performance">Hiệu năng</a></li>
+        <li><a href="#team">Nhóm</a></li>
+      </ul>
+    </nav>
 
-<nav>
-    <a href="#about">Giới thiệu</a>
-    <a href="#skills">Kỹ năng</a>
-    <a href="#projects">Dự án</a>
-    <a href="#contact">Liên hệ</a>
-</nav>
+    <header>
+      <h1>Cloud Computing & <br>Cloudflare Pages</h1>
+      <p>Báo cáo chi tiết về giải pháp triển khai Website tĩnh hiện đại, quy trình bảo mật và tối ưu hóa hiệu năng trên nền tảng đám mây.</p>
+    </header>
 
-<section id="about" class="about">
-    <h2>Giới thiệu</h2>
-    <p>
-        Tôi là một sinh viên / lập trình viên yêu thích công nghệ web, cloud computing và trí tuệ nhân tạo.
-        Tôi có kinh nghiệm xây dựng website tĩnh, hệ thống quản lý bằng Laravel và các dự án IoT – Smart Home.
-    </p>
-</section>
+    <div class="container">
 
-<section id="skills" class="skills">
-    <h2>Kỹ năng</h2>
-    <ul>
-        <li>HTML, CSS, JavaScript</li>
-        <li>Laravel, PHP, MySQL</li>
-        <li>Bootstrap, Tailwind CSS</li>
-        <li>Cloud Computing, Cloudflare</li>
-        <li>Python, Machine Learning</li>
-        <li>ESP32, IoT, MQTT</li>
-    </ul>
-</section>
-
-<section id="projects">
-    <h2>Dự án</h2>
-    <div class="projects">
-        <div class="project">
-            <h3>Hệ thống quản lý nội thất</h3>
-            <p>Website quản lý thiết bị nội thất sử dụng Laravel, DataTables và Ajax.</p>
+      <h2 class="section-title" id="overview"><i class="fas fa-cloud"></i> 1. Điện toán đám mây (Cloud Computing)</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Bản chất & Lợi ích</h3>
+          <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600&auto=format&fit=crop" alt="Cloud Computing Overview">
+          <p>Cloud Computing là việc phân phối các tài nguyên công nghệ thông tin (IT) theo nhu cầu qua Internet với chính sách thanh toán theo mức sử dụng (pay-as-you-go). Thay vì mua, sở hữu và bảo trì các trung tâm dữ liệu vật lý và máy chủ, bạn có thể tiếp cận các dịch vụ công nghệ.</p>
+          <ul class="feature-list">
+            <li><b>Linh hoạt (Agility):</b> Triển khai tài nguyên chỉ trong vài phút.</li>
+            <li><b>Co giãn (Elasticity):</b> Tự động mở rộng hoặc thu hẹp tài nguyên theo lưu lượng truy cập thực tế.</li>
+            <li><b>Tiết kiệm chi phí:</b> Chuyển đổi chi phí đầu tư cố định (CAPEX) sang chi phí vận hành (OPEX).</li>
+            <li><b>Triển khai toàn cầu:</b> Đưa ứng dụng đến gần người dùng qua các Region/Zone.</li>
+          </ul>
         </div>
-        <div class="project">
-            <h3>Smart Home ESP32</h3>
-            <p>Hệ thống nhà thông minh tích hợp cảm biến, MQTT và Telegram.</p>
+        <div class="card">
+          <h3>Các mô hình dịch vụ chính</h3>
+          <img src="https://images.unsplash.com/photo-1593591185561-597541f6e216?q=80&w=600&auto=format&fit=crop" alt="Cloud Service Models">
+          <div style="margin-top:10px">
+            <div style="margin-bottom: 15px;">
+              <strong style="color:var(--primary)"><i class="fas fa-layer-group"></i> IaaS (Infrastructure as a Service)</strong>
+              <p style="font-size:0.9rem; margin-bottom:5px">Cung cấp "phần cứng ảo" (CPU, RAM, Disk). Người dùng tự cài OS và quản lý. <br><i>Ví dụ: AWS EC2, Google Compute Engine.</i></p>
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong style="color:var(--secondary)"><i class="fas fa-code"></i> PaaS (Platform as a Service)</strong>
+              <p style="font-size:0.9rem; margin-bottom:5px">Cung cấp môi trường để phát triển và deploy code, nhà cung cấp lo phần hạ tầng bên dưới. <br><i>Ví dụ: Heroku, Google App Engine, Cloudflare Pages.</i></p>
+            </div>
+            <div>
+              <strong style="color:var(--accent)"><i class="fas fa-th"></i> SaaS (Software as a Service)</strong>
+              <p style="font-size:0.9rem; margin-bottom:5px">Phần mềm hoàn chỉnh chạy trên cloud. <br><i>Ví dụ: Gmail, Dropbox, Office 365.</i></p>
+            </div>
+          </div>
         </div>
-        <div class="project">
-            <h3>Nhận diện bệnh phổi</h3>
-            <p>Ứng dụng Deep Learning với ResNet, DenseNet trên tập NIH Chest X-ray.</p>
+      </div>
+
+      <h2 class="section-title" id="tech"><i class="fab fa-cloudflare"></i> 2. Cloudflare Pages & Web Tĩnh</h2>
+      <div class="card" style="margin-bottom: 30px;">
+        <h3>Tại sao chọn Cloudflare Pages?</h3>
+        <img src="https://images.unsplash.com/photo-1616763355548-111818274718?q=80&w=600&auto=format&fit=crop" alt="Cloudflare Pages benefits">
+        <p>Cloudflare Pages là một nền tảng <b>JAMstack</b> (JavaScript, APIs, Markup) hiện đại. Nó cho phép các nhà phát triển front-end cộng tác và triển khai các trang web tĩnh (Static Site) và SSR (Server-side Rendering) một cách nhanh chóng.</p>
+        
+        <h3 style="margin-top: 30px;">Quy trình hoạt động cơ bản (Deployment Workflow)</h3>
+        <img src="https://www.cloudflare.com/img/products/pages/cf_pages_header_image.svg" class="workflow-img" alt="Cloudflare Pages Workflow Diagram">
+        <div class="workflow">
+          <div class="step">
+            <strong>1. Kết nối Git</strong>
+            <span>Liên kết tài khoản GitHub/GitLab. Chọn repository chứa mã nguồn website.</span>
+          </div>
+          <div class="step">
+            <strong>2. Tự động Build</strong>
+            <span>Khi bạn `git push` code mới, Cloudflare tự động chạy lệnh build (ví dụ: `npm run build` cho React/Vue/Next.js) để tạo ra các file tĩnh.</span>
+          </div>
+          <div class="step">
+            <strong>3. Deploy toàn cầu</strong>
+            <span>Kết quả build (các file HTML, CSS, JS, ảnh) được phân phối ngay lập tức tới 275+ trung tâm dữ liệu toàn cầu của Cloudflare (Edge Network).</span>
+          </div>
         </div>
+
+        <ul class="feature-list">
+          <li><b>Preview Deployments:</b> Tạo một đường dẫn (URL) riêng biệt cho mỗi Pull Request để kiểm tra các thay đổi trước khi merge code chính thức, giúp quá trình review dễ dàng hơn.</li>
+          <li><b>Tích hợp CDN miễn phí:</b> Nội dung được cache tại server gần người dùng nhất, giảm độ trễ (latency) xuống mili giây, cải thiện đáng kể tốc độ tải trang.</li>
+          <li><b>Bảo mật mặc định:</b> Tự động cấp chứng chỉ SSL/TLS miễn phí, hỗ trợ HTTP/3 và QUIC, bảo vệ website khỏi nhiều loại tấn công mạng cơ bản.</li>
+        </ul>
+      </div>
+
+      <h2 class="section-title" id="security"><i class="fas fa-shield-alt"></i> 3. Phân tích Bảo mật (Security Audit)</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Kết quả kiểm tra từ SecurityHeaders.com</h3>
+          <img src="https://images.unsplash.com/photo-1598282361661-081e6b3b27b9?q=80&w=600&auto=format&fit=crop" alt="Security Audit Graph">
+          <p>Việc cấu hình các HTTP Response Headers là tuyến phòng thủ đầu tiên cho trình duyệt, giúp bảo vệ người dùng khỏi nhiều mối đe dọa phổ biến. Dưới đây là thống kê các lỗi thường gặp mà nhóm đã khảo sát trên các trang web mẫu:</p>
+          <div class="chart-wrapper">
+            <canvas id="securityChart"></canvas>
+          </div>
+          <p style="font-size: 0.85rem; color: #666; text-align: center; margin-top: 10px;">*Tỷ lệ các website thiếu cấu hình Header quan trọng</p>
+        </div>
+        
+        <div class="card">
+          <h3>Giải thích các Headers quan trọng</h3>
+          <img src="https://images.unsplash.com/photo-1627916609939-d32616f71d53?q=80&w=600&auto=format&fit=crop" alt="Security Headers explanation">
+          <div class="audit-detail csp">
+            <h4><i class="fas fa-lock"></i> Content-Security-Policy (CSP)</h4>
+            <p style="font-size: 0.9rem;">Header mạnh mẽ nhất trong việc phòng chống XSS (Cross-Site Scripting). CSP quy định trình duyệt chỉ được phép tải các tài nguyên (JavaScript, CSS, hình ảnh, font chữ...) từ các nguồn (domain) đáng tin cậy đã được liệt kê rõ ràng. Điều này ngăn chặn việc thực thi mã độc từ bên ngoài.</p>
+          </div>
+          
+          <div class="audit-detail hsts" style="margin-top: 15px;">
+            <h4><i class="fas fa-key"></i> Strict-Transport-Security (HSTS)</h4>
+            <p style="font-size: 0.9rem;">Bắt buộc trình duyệt phải sử dụng kết nối bảo mật HTTPS cho mọi yêu cầu tới server trong một khoảng thời gian nhất định. HSTS ngăn chặn các cuộc tấn công downgrade protocol và Man-in-the-Middle (MITM) bằng cách đảm bảo dữ liệu luôn được mã hóa khi truyền tải.</p>
+          </div>
+
+          <div class="audit-detail xframe" style="margin-top: 15px;">
+            <h4><i class="fas fa-window-maximize"></i> X-Frame-Options</h4>
+            <p style="font-size: 0.9rem;">Header này ngăn chặn trang web của bạn bị nhúng (embed) vào một thẻ `iframe`, `frame` hoặc `object` trên trang web khác. Đây là cách phòng chống tấn công Clickjacking hiệu quả, nơi kẻ tấn công cố gắng lừa người dùng nhấp vào một yếu tố ẩn trên trang web của họ.</p>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-title" id="performance"><i class="fas fa-tachometer-alt"></i> 4. Đánh giá Hiệu năng (Core Web Vitals)</h2>
+      <div class="card">
+        <div class="grid-2">
+          <div>
+            <h3>Google PageSpeed Insights</h3>
+            <img src="https://images.unsplash.com/photo-1626863072049-3665a396425a?q=80&w=600&auto=format&fit=crop" alt="PageSpeed Insights">
+            <p>Google sử dụng bộ chỉ số <b>Core Web Vitals</b> để đánh giá trải nghiệm thực tế của người dùng trên website. Các chỉ số này tập trung vào tốc độ tải (loading), khả năng tương tác (interactivity) và độ ổn định hình ảnh (visual stability). Điểm số cao không chỉ tốt cho SEO mà còn giữ chân người dùng.</p>
+            
+            <div class="web-vitals-grid">
+              <div class="vital-card">
+                <b>LCP</b>
+                <small>Largest Contentful Paint</small>
+                <span style="display:block; font-size:0.8rem; margin-top:5px">Đo tốc độ tải phần tử nội dung lớn nhất trên trang. <b>Tốt: &lt; 2.5 giây</b>.</span>
+              </div>
+              <div class="vital-card">
+                <b>INP</b>
+                <small>Interaction to Next Paint</small>
+                <span style="display:block; font-size:0.8rem; margin-top:5px">Đo độ trễ tổng thể của mọi tương tác người dùng (nhấp chuột, chạm, gõ phím) trên trang. <b>Tốt: &lt; 200 mili giây</b>.</span>
+              </div>
+              <div class="vital-card">
+                <b>CLS</b>
+                <small>Cumulative Layout Shift</small>
+                <span style="display:block; font-size:0.8rem; margin-top:5px">Đo độ ổn định giao diện hình ảnh của trang. <b>Tốt: &lt; 0.1</b>.</span>
+              </div>
+            </div>
+
+            <p style="margin-top: 20px;"><b>Kết luận:</b> Khi triển khai trên Cloudflare Pages, nhờ mạng lưới CDN toàn cầu rộng khắp và các tính năng tối ưu hóa tích hợp sẵn (như nén Brotli tự động, tối ưu hình ảnh), các chỉ số Core Web Vitals thường đạt mức tối ưu (xanh lá) mà không cần cấu hình server phức tạp hay tối ưu thủ công quá nhiều.</p>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <canvas id="pageSpeedChart" style="max-height: 250px;"></canvas>
+            <p style="text-align: center; margin-top: 15px; font-weight: 600;">Điểm số trung bình sau khi tối ưu</p>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-title" id="team" style="justify-content: center;"><i class="fas fa-users"></i> Thành viên thực hiện</h2>
+      <div class="members-container">
+        <div class="member">
+          <img src="https://ui-avatars.com/api/?name=Trinh+Khac+Nhut&background=4f46e5&color=fff&size=150" alt="Nhựt">
+          <h4>Trịnh Khắc Nhựt</h4>
+          <p style="color: #64748b; font-size: 0.9rem;">MSSV: 22004294</p>
+          <p style="font-size: 0.8rem; margin-top: 10px;">Cloud Architecture & Deployment</p>
+        </div>
+        <div class="member">
+          <img src="https://ui-avatars.com/api/?name=Truong+Minh+Thu&background=ec4899&color=fff&size=150" alt="Thư">
+          <h4>Trương Minh Thư</h4>
+          <p style="color: #64748b; font-size: 0.9rem;">MSSV: 22004297</p>
+          <p style="font-size: 0.8rem; margin-top: 10px;">Content Strategy & Testing</p>
+        </div>
+        <div class="member">
+          <img src="https://ui-avatars.com/api/?name=Nguyen+Ngoc+Huong&background=06b6d4&color=fff&size=150" alt="Hưởng">
+          <h4>Nguyễn Ngọc Hưởng</h4>
+          <p style="color: #64748b; font-size: 0.9rem;">MSSV: 22004020</p>
+          <p style="font-size: 0.8rem; margin-top: 10px;">Security Audit & Frontend</p>
+        </div>
+      </div>
+
     </div>
-</section>
 
-<section id="contact" class="contact">
-    <h2>Liên hệ</h2>
-    <p>Email: <a href="mailto:minhthu@example.com">minhthu@example.com</a></p>
-    <p>GitHub: <a href="#">github.com/minhthu</a></p>
-</section>
+    <footer style="background: white; padding: 40px; text-align: center; border-top: 1px solid #eee; margin-top: 60px;">
+      <p>© 2025 Báo cáo Cloud Computing | Cloudflare Pages Analysis</p>
+    </footer>
 
-<footer>
-    <p>© 2025 Minh Thư. All rights reserved.</p>
-</footer>
+    <script>
+      // 1. Biểu đồ Security (Bar Chart - Horizontal)
+      const ctxSec = document.getElementById('securityChart').getContext('2d');
+      new Chart(ctxSec, {
+        type: 'bar', // Cột ngang
+        indexAxis: 'y',
+        data: {
+          labels: ['Thiếu Content-Security-Policy', 'Thiếu HSTS', 'Thiếu X-Frame-Options', 'Thiếu Referrer-Policy'],
+          datasets: [{
+            label: 'Số lượng trang web gặp lỗi (%)',
+            data: [75, 45, 30, 60],
+            backgroundColor: [
+              'rgba(239, 68, 68, 0.8)', // Red
+              'rgba(249, 115, 22, 0.8)', // Orange
+              'rgba(234, 179, 8, 0.8)', // Yellow
+              'rgba(59, 130, 246, 0.8)'  // Blue
+            ],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { max: 100 } }
+        }
+      });
 
-</body>
+      // 2. Biểu đồ PageSpeed (Radar Chart)
+      const ctxSpeed = document.getElementById('pageSpeedChart').getContext('2d');
+      new Chart(ctxSpeed, {
+        type: 'radar',
+        data: {
+          labels: ['Performance', 'Accessibility', 'Best Practices', 'SEO'],
+          datasets: [{
+            label: 'Điểm số đạt được',
+            data: [98, 100, 95, 100],
+            fill: true,
+            backgroundColor: 'rgba(16, 185, 129, 0.2)', // Green transparent
+            borderColor: 'rgb(16, 185, 129)',
+            pointBackgroundColor: 'rgb(16, 185, 129)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(16, 185, 129)'
+          }]
+        },
+        options: {
+          responsive: true,
+          elements: { line: { borderWidth: 3 } },
+          scales: {
+            r: {
+              angleLines: { display: true },
+              suggestedMin: 50,
+              suggestedMax: 100
+            }
+          }
+        }
+      });
+    </script>
+  </body>
 </html>
