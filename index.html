@@ -8,14 +8,10 @@
   <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-
   <style>
 :root {
   --primary: #6366f1;
   --secondary: #22c55e;
-  --bg: #f1f5f9;
   --card-bg: #ffffff;
   --text-main: #0f172a;
   --text-sub: #475569;
@@ -45,13 +41,11 @@ h1 {
   background: linear-gradient(90deg, #6366f1, #22c55e);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 10px;
 }
 
 .subtitle {
   text-align: center;
   color: var(--text-sub);
-  font-size: 16px;
   margin-bottom: 60px;
 }
 
@@ -60,18 +54,6 @@ h1 {
   margin: 70px 0 25px;
   padding-left: 18px;
   border-left: 6px solid var(--primary);
-  position: relative;
-}
-
-.section-title::after {
-  content: "";
-  position: absolute;
-  bottom: -6px;
-  left: 18px;
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  border-radius: 4px;
 }
 
 .card {
@@ -82,10 +64,11 @@ h1 {
   margin-bottom: 45px;
 }
 
-.card h3 {
-  margin-top: 0;
-  font-size: 22px;
-  color: var(--primary);
+.card img {
+  margin-top: 20px;
+  max-width: 100%;
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
 }
 
 .vital-card {
@@ -104,7 +87,6 @@ footer {
   padding-top: 30px;
   border-top: 1px dashed #c7d2fe;
   color: #64748b;
-  font-size: 14px;
 }
   </style>
 </head>
@@ -112,115 +94,62 @@ footer {
 <body>
 <div class="container">
 
-  <h1>Cloudflare Zero Trust & Cloudflare Pages</h1>
-  <p class="subtitle">
-    Báo cáo triển khai kiểm soát truy cập website theo mô hình Zero Trust
-  </p>
+<h1>Cloudflare Zero Trust & Cloudflare Pages</h1>
+<p class="subtitle">Báo cáo triển khai kiểm soát truy cập website theo mô hình Zero Trust</p>
 
-  <!-- ===== YÊU CẦU 1 ===== -->
-  <h2 class="section-title">1. Kiến thức nền tảng</h2>
-
-  <div class="card">
-    <h3>Authentication</h3>
-    <p>
-      Authentication là quá trình xác minh danh tính người dùng khi truy cập hệ thống,
-      trả lời cho câu hỏi “Người dùng là ai?”. Trong mô hình này, người dùng phải đăng nhập
-      thông qua Google hoặc GitHub.
-    </p>
-
-    <h3>Authorization & IAM</h3>
-    <p>
-      Authorization là quá trình kiểm tra quyền truy cập sau khi xác thực.
-      IAM (Identity and Access Management) giúp quản lý danh tính và phân quyền người dùng.
-      Cloudflare Access đóng vai trò như một hệ thống IAM trên nền tảng cloud.
-    </p>
-
-    <h3>Zero Trust Security Model</h3>
-    <p>
-      Zero Trust là mô hình bảo mật dựa trên nguyên tắc “Never trust, always verify”.
-      Mọi yêu cầu truy cập đều phải được xác thực và kiểm tra quyền,
-      kể cả khi người dùng ở trong mạng nội bộ.
-    </p>
-  </div>
-
-  <!-- ===== SƠ ĐỒ 1 ===== -->
-  <h2 class="section-title">2. Sơ đồ khối kiểm soát truy cập</h2>
-  <div class="card">
-    <p>
-      Sơ đồ mô tả các thành phần tham gia trong quá trình kiểm soát truy cập website
-      theo mô hình Zero Trust.
-    </p>
-    <p>
-      👉 Link sơ đồ:
-      <a href="https://github.com/minhthu12234tgf/minhthu12234tgf.github.io/blob/main/Cloudflare%20Zero%20Trust-2025-12-20-001810.png">Xem sơ đồ khối kiểm soát truy cập</a>
-    </p>
-  </div>
-
-  <!-- ===== SƠ ĐỒ 2 ===== -->
-  <h2 class="section-title">3. Sơ đồ trình tự xử lý truy cập</h2>
-  <div class="card">
-    <p>
-      Sơ đồ thể hiện trình tự xử lý khi người dùng gửi HTTP/HTTPS request
-      đến website và được Cloudflare Access xử lý.
-    </p>
-    <p>
-      👉 Link sơ đồ:
-      <a href="https://link-so-do-2" target="_blank">Xem sơ đồ trình tự xử lý truy cập</a>
-    </p>
-  </div>
-
-  <!-- ===== SƠ ĐỒ 3 ===== -->
-  <h2 class="section-title">4. Sơ đồ quyết định cho phép / từ chối truy cập</h2>
-  <div class="card">
-    <p>
-      Sơ đồ mô tả các nhánh quyết định dựa trên trạng thái xác thực
-      và quyền truy cập của người dùng.
-    </p>
-    <p>
-      👉 Link sơ đồ:
-      <a href="https://link-so-do-3" target="_blank">Xem sơ đồ quyết định truy cập</a>
-    </p>
-  </div>
-
-  <!-- ===== SƠ ĐỒ 4 ===== -->
-  <h2 class="section-title">5. Sơ đồ thành phần tham gia</h2>
-  <div class="card">
-    <p>
-      Sơ đồ thể hiện các thành phần chính trong hệ thống:
-      User, Cloudflare Access, Identity Provider và Cloudflare Pages.
-    </p>
-    <p>
-      👉 Link sơ đồ:
-      <a href="https://link-so-do-4" target="_blank">Xem sơ đồ thành phần hệ thống</a>
-    </p>
-  </div>
-
-  <!-- ===== SSL LABS ===== -->
-  <!-- ===== SSL LABS ===== -->
-<h2 class="section-title">6. Đánh giá bảo mật SSL</h2>
+<!-- ===== YÊU CẦU 1 ===== -->
+<h2 class="section-title">1. Kiến thức nền tảng</h2>
 <div class="card">
-  <p>
-    Website được kiểm tra bằng công cụ SSL Labs (Qualys) và đạt xếp hạng:
-  </p>
-
-  <div class="vital-card">A</div>
-
-  <p style="margin-top:15px">
-    Website sử dụng HTTPS an toàn, cấu hình TLS tốt và không phát hiện
-    lỗ hổng bảo mật nghiêm trọng.
-  </p>
-
-  <p>
-    👉 Link hình ảnh kết quả kiểm tra SSL:
-    <a href="https://link-hinh-ssl-labs" target="_blank">
-      Xem hình kết quả SSL Labs
-    </a>
-  </p>
+  <p><b>Authentication:</b> Xác minh danh tính người dùng thông qua Google hoặc GitHub.</p>
+  <p><b>Authorization & IAM:</b> Kiểm tra quyền truy cập sau khi xác thực. Cloudflare Access đóng vai trò hệ thống IAM.</p>
+  <p><b>Zero Trust:</b> “Never trust, always verify” – mọi yêu cầu đều phải kiểm tra.</p>
 </div>
 
-  <footer>
-    © 2025 — Cloudflare Zero Trust Report
-  </footer>
+<!-- ===== SƠ ĐỒ 1 ===== -->
+<h2 class="section-title">2. Sơ đồ khối kiểm soát truy cập</h2>
+<div class="card">
+  <p>Sơ đồ mô tả tổng quan các khối trong hệ thống kiểm soát truy cập.</p>
+  <img src="https://raw.githubusercontent.com/minhthu12234tgf/minhthu12234tgf.github.io/main/Cloudflare%20Zero%20Trust-2025-12-20-001810.png"
+       alt="Sơ đồ khối kiểm soát truy cập">
+</div>
+
+<!-- ===== SƠ ĐỒ 2 ===== -->
+<h2 class="section-title">3. Sơ đồ trình tự xử lý truy cập</h2>
+<div class="card">
+  <p>Sơ đồ thể hiện luồng xử lý HTTP/HTTPS request qua Cloudflare Access.</p>
+  <img src="https://raw.githubusercontent.com/minhthu12234tgf/minhthu12234tgf.github.io/main/Cloudflare%20Access%20Zero-2025-12-20-002303.png"
+       alt="Sơ đồ trình tự xử lý truy cập">
+</div>
+
+<!-- ===== SƠ ĐỒ 3 ===== -->
+<h2 class="section-title">4. Sơ đồ quyết định cho phép / từ chối truy cập</h2>
+<div class="card">
+  <p>Sơ đồ thể hiện các nhánh quyết định dựa trên trạng thái xác thực và quyền.</p>
+  <img src="https://raw.githubusercontent.com/minhthu12234tgf/minhthu12234tgf.github.io/main/Untitled%20diagram-2025-12-20-002906.png"
+       alt="Sơ đồ quyết định truy cập">
+</div>
+
+<!-- ===== SƠ ĐỒ 4 ===== -->
+<h2 class="section-title">5. Sơ đồ thành phần tham gia</h2>
+<div class="card">
+  <p>Sơ đồ thể hiện các thành phần: User, Cloudflare Access, IdP, Cloudflare Pages.</p>
+  <img src="https://raw.githubusercontent.com/minhthu12234tgf/minhthu12234tgf.github.io/main/sodo4.png"
+       alt="Sơ đồ thành phần hệ thống">
+</div>
+
+<!-- ===== SSL ===== -->
+<h2 class="section-title">6. Đánh giá bảo mật SSL</h2>
+<div class="card">
+  <p>Website được đánh giá bằng công cụ SSL Labs (Qualys):</p>
+  <div class="vital-card">A</div>
+
+  <img src="https://raw.githubusercontent.com/minhthu12234tgf/minhthu12234tgf.github.io/main/hinhdanhgia.png"
+       alt="Kết quả đánh giá SSL Labs">
+</div>
+
+<footer>
+© 2025 — Cloudflare Zero Trust Report
+</footer>
 
 </div>
 </body>
