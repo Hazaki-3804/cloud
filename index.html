@@ -1,531 +1,227 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Báo cáo: Cloud Computing & Cloudflare Pages</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<head>
+  <meta charset="UTF-8" />
+  <title>Báo cáo Cloudflare Zero Trust & Cloudflare Pages</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <style>
-      :root {
-        --primary: #4f46e5; /* Indigo 600 */
-        --primary-dark: #4338ca;
-        --secondary: #ec4899; /* Pink 500 */
-        --accent: #06b6d4; /* Cyan 500 */
-        --bg-color: #f1f5f9; /* Slate 100 */
-        --card-bg: #ffffff;
-        --text-main: #1e293b; /* Slate 800 */
-        --text-body: #475569; /* Slate 600 */
-        --border-color: #e2e8f0;
-        --success-light: #ecfdf5; /* Green 50 */
-        --warning-light: #fff7ed; /* Orange 50 */
-        --danger-light: #fef2f2; /* Red 50 */
-        --info-light: #eff6ff; /* Blue 50 */
-      }
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-      * { box-sizing: border-box; margin: 0; padding: 0; }
-      
-      body {
-        font-family: 'Outfit', sans-serif;
-        background-color: var(--bg-color);
-        color: var(--text-main);
-        line-height: 1.7;
-        overflow-x: hidden;
-      }
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-      /* --- Navigation --- */
-      nav {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--border-color);
-        z-index: 1000;
-        padding: 15px 0;
-      }
-      
-      nav ul {
-        display: flex;
-        justify-content: center;
-        list-style: none;
-        flex-wrap: wrap;
-        gap: 20px;
-      }
+  <style>
+:root {
+  --primary: #6366f1;
+  --secondary: #22c55e;
+  --bg: #f1f5f9;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-sub: #475569;
+  --radius: 18px;
+}
 
-      nav a {
-        text-decoration: none;
-        color: var(--text-body);
-        font-weight: 600;
-        padding: 8px 16px;
-        border-radius: 8px;
-        transition: all 0.2s ease;
-        font-size: 0.95rem;
-      }
+* { box-sizing: border-box; }
 
-      nav a:hover, nav a.active {
-        background-color: #eef2ff;
-        color: var(--primary);
-      }
+body {
+  font-family: 'Outfit', sans-serif;
+  margin: 0;
+  background: linear-gradient(180deg, #f8fafc, #eef2ff);
+  color: var(--text-main);
+  line-height: 1.75;
+}
 
-      /* --- Header --- */
-      header {
-        margin-top: 70px;
-        padding: 100px 20px 80px;
-        text-align: center;
-        background: linear-gradient(180deg, #fff 0%, var(--bg-color) 100%);
-        position: relative;
-        overflow: hidden;
-      }
-      
-      header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -20%;
-        width: 60%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(79, 70, 229, 0.05) 0%, transparent 70%);
-        z-index: 0;
-      }
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 50px 20px;
+}
 
-      header h1 {
-        font-size: 3.5rem;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 20px;
-        font-weight: 800;
-        position: relative;
-        z-index: 1;
-        letter-spacing: -1.5px;
-      }
+h1 {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #6366f1, #22c55e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+}
 
-      header p {
-        font-size: 1.2rem;
-        color: var(--text-body);
-        max-width: 750px;
-        margin: 0 auto;
-        position: relative;
-        z-index: 1;
-      }
+.subtitle {
+  text-align: center;
+  color: var(--text-sub);
+  font-size: 16px;
+  margin-bottom: 60px;
+}
 
-      /* --- Container & Layout --- */
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px 60px;
-      }
+.section-title {
+  font-size: 28px;
+  margin: 70px 0 25px;
+  padding-left: 18px;
+  border-left: 6px solid var(--primary);
+  position: relative;
+}
 
-      .section-title {
-        font-size: 2rem;
-        margin-bottom: 30px;
-        color: var(--text-main);
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding-top: 40px;
-        border-top: 1px dashed var(--border-color);
-      }
-      
-      .section-title i { color: var(--primary); }
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 18px;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  border-radius: 4px;
+}
 
-      .grid-2 {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); /* Adjusted minmax for better image fit */
-        gap: 30px;
-      }
+.card {
+  background: var(--card-bg);
+  padding: 28px;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  margin-bottom: 45px;
+}
 
-      /* --- Cards --- */
-      .card {
-        background: var(--card-bg);
-        border-radius: 20px;
-        padding: 35px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        border: 1px solid var(--border-color);
-        transition: transform 0.3s ease;
-      }
+.card h3 {
+  margin-top: 0;
+  font-size: 22px;
+  color: var(--primary);
+}
 
-      .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
-      }
+.vital-card {
+  background: linear-gradient(135deg,#22c55e,#4ade80);
+  color: white;
+  padding: 22px 34px;
+  border-radius: 20px;
+  font-size: 36px;
+  font-weight: 800;
+  width: fit-content;
+}
 
-      .card h3 {
-        font-size: 1.4rem;
-        margin-bottom: 15px;
-        color: var(--primary-dark);
-      }
+footer {
+  text-align: center;
+  margin-top: 100px;
+  padding-top: 30px;
+  border-top: 1px dashed #c7d2fe;
+  color: #64748b;
+  font-size: 14px;
+}
+  </style>
+</head>
 
-      .card p { margin-bottom: 15px; color: var(--text-body); text-align: justify; }
+<body>
+<div class="container">
 
-      .card img {
-        width: 100%;
-        border-radius: 12px;
-        margin-bottom: 20px;
-        object-fit: cover;
-        height: 220px; /* Consistent height for images in cards */
-      }
+  <h1>Cloudflare Zero Trust & Cloudflare Pages</h1>
+  <p class="subtitle">
+    Báo cáo triển khai kiểm soát truy cập website theo mô hình Zero Trust
+  </p>
 
-      /* --- List Styles --- */
-      .feature-list { list-style: none; margin-top: 15px; }
-      .feature-list li {
-        margin-bottom: 12px;
-        padding-left: 30px;
-        position: relative;
-        color: var(--text-body);
-      }
-      .feature-list li::before {
-        content: '\f00c'; /* FontAwesome check */
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        position: absolute;
-        left: 0;
-        top: 2px;
-        color: var(--success, #10b981);
-      }
+  <!-- ===== YÊU CẦU 1 ===== -->
+  <h2 class="section-title">1. Kiến thức nền tảng</h2>
 
-      /* --- Workflow Steps --- */
-      .workflow {
-        display: flex;
-        justify-content: space-between;
-        margin: 30px 0;
-        flex-wrap: wrap;
-        gap: 15px;
-      }
-      .step {
-        flex: 1;
-        background: #f8fafc;
-        padding: 20px;
-        border-radius: 12px;
-        border-left: 4px solid var(--primary);
-        min-width: 200px;
-      }
-      .step strong { display: block; color: var(--text-main); margin-bottom: 5px; font-size: 1.1rem; }
-      .step span { font-size: 0.9rem; color: var(--text-body); }
-      .workflow-img {
-        width: 100%;
-        max-width: 700px;
-        display: block;
-        margin: 30px auto;
-        border-radius: 12px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      }
+  <div class="card">
+    <h3>Authentication</h3>
+    <p>
+      Authentication là quá trình xác minh danh tính người dùng khi truy cập hệ thống,
+      trả lời cho câu hỏi “Người dùng là ai?”. Trong mô hình này, người dùng phải đăng nhập
+      thông qua Google hoặc GitHub.
+    </p>
 
-      /* --- Chart & Audit Section --- */
-      .chart-wrapper {
-        position: relative;
-        height: 280px;
-        width: 100%;
-      }
+    <h3>Authorization & IAM</h3>
+    <p>
+      Authorization là quá trình kiểm tra quyền truy cập sau khi xác thực.
+      IAM (Identity and Access Management) giúp quản lý danh tính và phân quyền người dùng.
+      Cloudflare Access đóng vai trò như một hệ thống IAM trên nền tảng cloud.
+    </p>
 
-      .audit-detail {
-        background: var(--info-light); /* Changed to info_light for general explanation */
-        border-radius: 12px;
-        padding: 20px;
-        margin-top: 20px;
-        border-left: 4px solid var(--primary); /* Added border to distinguish */
-      }
-      /* Specific colors for security headers */
-      .audit-detail.csp { background: var(--success-light); border-left-color: #15803d; }
-      .audit-detail.hsts { background: var(--warning-light); border-left-color: #c2410c; }
-      .audit-detail.xframe { background: var(--info-light); border-left-color: #1d4ed8; }
+    <h3>Zero Trust Security Model</h3>
+    <p>
+      Zero Trust là mô hình bảo mật dựa trên nguyên tắc “Never trust, always verify”.
+      Mọi yêu cầu truy cập đều phải được xác thực và kiểm tra quyền,
+      kể cả khi người dùng ở trong mạng nội bộ.
+    </p>
+  </div>
 
-      .audit-detail h4 { margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
-      .audit-detail.csp h4 { color: #15803d; }
-      .audit-detail.hsts h4 { color: #c2410c; }
-      .audit-detail.xframe h4 { color: #1d4ed8; }
+  <!-- ===== SƠ ĐỒ 1 ===== -->
+  <h2 class="section-title">2. Sơ đồ khối kiểm soát truy cập</h2>
+  <div class="card">
+    <p>
+      Sơ đồ mô tả các thành phần tham gia trong quá trình kiểm soát truy cập website
+      theo mô hình Zero Trust.
+    </p>
+    <p>
+      👉 Link sơ đồ:
+      <a href="https://link-so-do-1" target="_blank">Xem sơ đồ khối kiểm soát truy cập</a>
+    </p>
+  </div>
 
-      .web-vitals-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-        margin-top: 20px;
-      }
-      .vital-card {
-        background: var(--success-light);
-        padding: 15px;
-        border-radius: 10px;
-        text-align: center;
-        border: 1px solid #a7f3d0;
-      }
-      .vital-card b { display: block; font-size: 1.5rem; color: #047857; }
-      .vital-card small { font-size: 0.8rem; color: #065f46; }
+  <!-- ===== SƠ ĐỒ 2 ===== -->
+  <h2 class="section-title">3. Sơ đồ trình tự xử lý truy cập</h2>
+  <div class="card">
+    <p>
+      Sơ đồ thể hiện trình tự xử lý khi người dùng gửi HTTP/HTTPS request
+      đến website và được Cloudflare Access xử lý.
+    </p>
+    <p>
+      👉 Link sơ đồ:
+      <a href="https://link-so-do-2" target="_blank">Xem sơ đồ trình tự xử lý truy cập</a>
+    </p>
+  </div>
 
-      /* --- Members --- */
-      .members-container {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        flex-wrap: wrap;
-      }
-      .member {
-        background: white;
-        padding: 30px;
-        border-radius: 16px;
-        text-align: center;
-        width: 250px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-        border-top: 5px solid var(--primary);
-      }
-      .member img {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        margin-bottom: 15px;
-        object-fit: cover;
-        background: #eee;
-      }
+  <!-- ===== SƠ ĐỒ 3 ===== -->
+  <h2 class="section-title">4. Sơ đồ quyết định cho phép / từ chối truy cập</h2>
+  <div class="card">
+    <p>
+      Sơ đồ mô tả các nhánh quyết định dựa trên trạng thái xác thực
+      và quyền truy cập của người dùng.
+    </p>
+    <p>
+      👉 Link sơ đồ:
+      <a href="https://link-so-do-3" target="_blank">Xem sơ đồ quyết định truy cập</a>
+    </p>
+  </div>
 
-      /* Mobile */
-      @media (max-width: 768px) {
-        header h1 { font-size: 2.2rem; }
-        .grid-2 { grid-template-columns: 1fr; }
-        .web-vitals-grid { grid-template-columns: 1fr; }
-      }
-    </style>
-  </head>
-  <body>
+  <!-- ===== SƠ ĐỒ 4 ===== -->
+  <h2 class="section-title">5. Sơ đồ thành phần tham gia</h2>
+  <div class="card">
+    <p>
+      Sơ đồ thể hiện các thành phần chính trong hệ thống:
+      User, Cloudflare Access, Identity Provider và Cloudflare Pages.
+    </p>
+    <p>
+      👉 Link sơ đồ:
+      <a href="https://link-so-do-4" target="_blank">Xem sơ đồ thành phần hệ thống</a>
+    </p>
+  </div>
 
-    <nav>
-      <ul>
-        <li><a href="#overview">Tổng quan</a></li>
-        <li><a href="#tech">Công nghệ</a></li>
-        <li><a href="#security">Bảo mật</a></li>
-        <li><a href="#performance">Hiệu năng</a></li>
-        <li><a href="#team">Nhóm</a></li>
-      </ul>
-    </nav>
+  <!-- ===== SSL LABS ===== -->
+  <!-- ===== SSL LABS ===== -->
+<h2 class="section-title">6. Đánh giá bảo mật SSL</h2>
+<div class="card">
+  <p>
+    Website được kiểm tra bằng công cụ SSL Labs (Qualys) và đạt xếp hạng:
+  </p>
 
-    <header>
-      <h1>Cloud Computing & <br>Cloudflare Pages</h1>
-      <p>Báo cáo chi tiết về giải pháp triển khai Website tĩnh hiện đại, quy trình bảo mật và tối ưu hóa hiệu năng trên nền tảng đám mây.</p>
-    </header>
+  <div class="vital-card">A</div>
 
-    <div class="container">
+  <p style="margin-top:15px">
+    Website sử dụng HTTPS an toàn, cấu hình TLS tốt và không phát hiện
+    lỗ hổng bảo mật nghiêm trọng.
+  </p>
 
-      <h2 class="section-title" id="overview"><i class="fas fa-cloud"></i> 1. Điện toán đám mây (Cloud Computing)</h2>
-      <div class="grid-2">
-        <div class="card">
-          <h3>Bản chất & Lợi ích</h3>
-          <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600&auto=format&fit=crop" alt="Cloud Computing Overview">
-          <p>Cloud Computing là việc phân phối các tài nguyên công nghệ thông tin (IT) theo nhu cầu qua Internet với chính sách thanh toán theo mức sử dụng (pay-as-you-go). Thay vì mua, sở hữu và bảo trì các trung tâm dữ liệu vật lý và máy chủ, bạn có thể tiếp cận các dịch vụ công nghệ.</p>
-          <ul class="feature-list">
-            <li><b>Linh hoạt (Agility):</b> Triển khai tài nguyên chỉ trong vài phút.</li>
-            <li><b>Co giãn (Elasticity):</b> Tự động mở rộng hoặc thu hẹp tài nguyên theo lưu lượng truy cập thực tế.</li>
-            <li><b>Tiết kiệm chi phí:</b> Chuyển đổi chi phí đầu tư cố định (CAPEX) sang chi phí vận hành (OPEX).</li>
-            <li><b>Triển khai toàn cầu:</b> Đưa ứng dụng đến gần người dùng qua các Region/Zone.</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h3>Các mô hình dịch vụ chính</h3>
-          <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxQTEREREhERFhUTGRwTFRcYFxYWGhgXFhsWGhcXIxobHSkgHRonGxYdITEiKSkrLi4uGR8zODMsNyguLi0BCgoKDg0OGxAQGzIlICYuLTUtLS8tNS0tNS0tLS8tLSstLS0tLS0tMi0tLy0tLS81LS0tLS0wLS8tLS0tLy0tLf/AABEIALcBEwMBEQACEQEDEQH/xAAcAAEAAQUBAQAAAAAAAAAAAAAABQIDBAYHCAH/xABGEAACAQMCAgYFCgMGBAcAAAABAgMABBESIQUxBhMiQVFhFDJScdEHFhcjQlOBkZOhlNLTJVRic4KyFTOSsSRDs8Hh8PH/xAAaAQEAAgMBAAAAAAAAAAAAAAAAAgUBAwQG/8QANBEAAgECAwUGBQUAAwEAAAAAAAECAxEEITESExRBUQUicYGR8FJhscHRJDKSoeEjQkNi/9oADAMBAAIRAxEAPwDuNAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKA5f0i6cyrefUP8AUwnSV2xJg9vJxyPIHyz316TC9l03h/8AkXef9dPfkefxPaU41+4+6v76nSbG7WWNJYzlXAZT5H/3rz1SnKnNwlqi9hNTipR0ZfqBMUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUBq/ygce9GtiqHEs2UTxUfbf8AcDzI8KsezcLvqt3+1a/ZHB2hidzSstXocazXrDy50L5LePYZrNzs2Xi9/N0/Edoe5vGqLtjC3SrR8/s/t6F32Tif8Ayl5fdHS68+XgoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKA03jfSmc3noVlHC7hSXZzkAgEkbHAI2595xgV2U8PDd7yo2kclSvPebumszQeIniVvJ1szXaMDnXqZk/NSUx/h5eVWENxNbMbe/7OGW/g7yv7/o690c4l6RawzHTqdQXAOwfHaHlv3VT1obE3EtaU9uCkSVazYKAUAoCmWQKpZiAqgkk8gBuTWUm3ZGG0ldnCOlXGzd3Ly76fVjHgg5fidyfM17HB4dUKShz5+J5TF13XquXLl4ERmuo5rFy3uGR1dCQyEMpHcRuDUZRUk4y0ZmEnGSktUd56OcXW6t451wCRh19lx6y/DyIrxuKoOhVcH5eB67D1lWpqaJOuc3CgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAxuJRu0MqxtpdkYI3gxBCn8DipQaUk3oRkm4tLU5H0b4dd23XXKYikiIhMcsbnWrkE4IBJ3Ubjn4+NvWqU6loPNPPJlXRp1IXksmss0TPFemk7gxeiysm4dkWSPrNiAAMEqmee+SPDv008LBd7az8jdPEyeWyzJ+SXh08YuHkV0jfSFDArqZdWWAPdggZ7/wAKjj5wlZLUzgYSjdvQ6HVcd4oBQCgNE+U7jLBUsYQzST4LhQSdGdlwN8sR+QPjVv2VQV3XnotPH/Cs7RrPZVKGr+hzPiHDJoCBNFJHnlqUgH3Hkav6denU/ZJMo6lCpT/erGHmtprsXbeFpGCIrMzbBVBJP4Coymoq8nZGYwcnaKuzdegt7LY3Qt7mOSNLjAGsEAONlYHkQc6TjxXPKqntCnDE0t5Tabj06e8y1wMp4epu6ispfU6zXnC9FAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUBhcSaYDEKoSQ27H1WxlDjvBII/EHlmpw2f+xGW1yMHrbtcaYywIJ+sMQYEDYExsAMnO4B7htnInam9X6X+5C8+SBnu9eRCAna2yjHd0wT9YO1p1bZA78nZQtTtrn7+QvO+h9juL0jJiiGCdueRpzsQ/tDTnzDYHKjVLr79AnU6E1Wk2igFAYnFeIJbwyTyHCxjUfPwA8ycAeZrZSpSqzUI6shUqKnFylojjXAeLTy8TW5VUeZ2ZtDMEBBRhoDHkQuw9w869PiKNOGF3bdoq2evPX11PP0Ks54neLN5/Q2O94EHlsc9ZEXkcejXL+kKAqlmZRryVJUDGRkkcu/hp4lxhU0dku9FbL18PsdtSgpShyzeUs/uV3nAkebh7CCGF5Ou1xvAEVhGAVBgWQjVg+1vzPLFYhiZRhUTk2ls2afX/wCrfYTw8ZTg7JPPl9r/AHK5rcw3NjNb2iLLNHMJISEttQTSAAA7BJMN3EnxxvjCmp0qkKk8k42f7tfJXRJwcKkJQjm07rT7uxr/AE74eI0tnzcIX1j0eaTrDGARupycKT4muzAVXKUlk7W7yVr+Jx4+moqLzXybvY6F0C6Qel2o1HMsWEk8T7L/AOoD8w1U2Pw24q5aPT8eRa4LEb6nnqtTZa4TrNf4nweZ7lpo5dKmIRAasaGBly4Gg5JDgbMvq752rYpJRtYi073Pthwm4WYPLcF0CsoGpsjKxgDGMEgozazuesx3CjlG2SCTuY0fBLwIoF0quFKahqYbQiNJNJ5trGvBOBk+scGs7cL6e7mLO2peHCbvsH0puyyEqWyulWkLgkIGbZkA3GerGTu2rG1HoZszYq1khQCgFAKAjuMRTEwNDgmOTW6l2jDp1cq6chTntOrYIx2fIVKLWdzDvyIG44JdlbjEh1PK0iH0mVV0FpCqHSuoKAy5CkersdsHYpxuvwRaZLcGsZ45rhpWDJJgp9ZI5By5ICkBUTBGABnuJbANQk00rGUncmagSFAKAUAoBQCgFAKAUAoBQCgFAKA5R8rHSLXILONuzF2pcd7kdlfwBz7z5V6DsrDbMd7LV6eBS9pV7vdx8znmqrgqrFTS5OSST458OVYtYy23mfNe+c7889+fGs/IZ3uC1DGZ9aTJyTk+JOaJW0Du9Sc6GdIPQ7pJCfq27Eo/wH7WPFTv+Y765Mbht/ScefL38zqwdd0al3pzO9qwIBBBB3BHIg99eSaselPtAKAUAoBQCgFAKAUAoDTeK9O0iuxAFDRKdMr75Dd+Mdy9/wCPhvcUOyZVMPvG+89F+fHkVNbtSNOvu7d3m/fQ3FWBAIIIO4I3BB76qGrZMtk7n2sAUAoBQCgLTWyEMpRMOcsNIwx23I7zsPyoDC4rLbxRDrlj0A4VSobfyXHgf3rZThKbtE58RiqWHjtVHZFPDr+3uTqTQzx+0vaXzGRy91ZqUp0/3EMLjaGJvu3e3qZ4tkDmQIms7FsDURt38+4flWo6z5FaourTGg1ethQNXPnjnzP50BhXlzaQAQyvaxCTcRuY0DbjfSee4H7VOMJyzSuRcorJszHs42VVMcZVfVUqpA9wxgVC5Iqe2QsHKIWXkxAJHuPMUAW2QOXCIHOxbA1EbbZ59w/KgIbpNxOOwtZZ1RFZuygAA1yHOnOOeNyfIGunC0HXqqHLn4GjEVlSpuRx355X397l/b4V6PgsP8CKLjK3xD55X397l/b4VngsP8CHGVviHzyvv73L+3wpwWH+BDjK3xD55X397l/b4U4LD/Ahxlb4h88r7+9y/t8KcFh/gQ4yt8Q+eV9/e5f2+FOCw/wIcZW+IfPK+/vcv7fCnBYf4EOMrfEdG+TPpKbpGinYNPDllY41NG3M+8HY+RWqbtLCKlJTgu6/r/pa4HEurHZlqjdI7VFLFUQF/WIUAtz5+PM/nVWd58WyjClBHGEO5XSuknbuxjuH5UuBJZRsoRo4yq8lKqQPcMYFLgqktkZg7IhZfVYgEj3HmKALbIHMgRNZ2LYGojbbPPuH5UB8S0jAYCNAH9bCgaufPbfmfzoD56HHo6vq49HPTpXT48sY50uCsW69jsL2Nk2HZGMYHhtttQFygIHplxOWGAi3ileWTKqURn0Dvc4Gx328/ca7cDRp1Kl6jSiurtf5fk5MZVnCn/xptvov7OLTRurlHV1fOCrAhsnlsd87/vXr41IuO0nkeVlTkpWazOpfJ1fThDa3EE66BmJ3jdRp70JI5ju8tu6vNdqU6Tlvack76pNev5PQ9mzqqO7qRato39DdaqC0FAKAUAoCJ6ScYFtFqxlmOlRy3xz9wrdQpbyViv7SxywlLatdvJfk52t0qEL9Y0jYYkKrE6wrYyTnkfxJ3yNjYTu9NDzFBwha93J56X1zte9/Hr4a5nC+JLBLHcBX0tlGUgIdguWAG3eDjxB99YcHVg4MnTrxwdeNdJ2d01p0z+501WyARyO4qqPZp3V0aj8pvSVrO0xGG6yfVGjA46vsnL5xzG2B8K6cLR3k89EaMRV3cfE0m44ZBLcCJ4pZJDGH1O0jdkMy4LNLncFQB3A6iQc43zr7qntt2V7evgjXChvqmwld2v7zNx+SrjvpFn1RVg1riIknVqXHZOccwBjHkPGtOLpbE79SeFq7cPA3SuU6RQHDvlK6RelXRjQ5igyi+DN9t/zGB5DPfXpuzsPuqd3q/aRQ46vvJ7K0RqOasDiGaAZoBmgGaAZoBmgM/gfFntZ47iPmhyRy1KdmU+RG1aa1KNWDhLmbKNR0pqSPRHD71Joo5ozlJFDKfI/9j3YryU4OEnGWqPSxkpJSRkVAkKAUAoBQCgFAKAUBxPpk/wDa8v8AmRf7Y69Tgn+jXg/qzzuKX6vzX2O1k15Y9EfaAUAoBQCgIrpFawyRFZm0he2CD2hgHkN87Z2xW6jOUJXicOPw9GvS2artbPLX/SFj4PF3XMYC9ntIM5TCZyW39TGe/uqcqkm80ckMJSirKayyzXTLr8iocDgdl624VtJzgaUB1dkDOTnOjuINSjXnFPZRGfZ9CtJOrO9vK9/XobXEwIBUggjII5Ed2PKuRl1Fpq60Iniy21wrQzxrKiEFsjIRslV89RwR2d8c9jvsg5wzi7EJKMsnmRkfDrBB1aKixAatI6wDfUQQ2cbgMfcR3EVFxqOpvG87WNinBUt3bK9yV4JHawjqbZUQEliqgg6u8nvzgDn5DwqU3OWciEFGOUSWrWTNR+UrpF6JalUbE0+UTxVftv8AgDgebCu7s/D72pd6LX7I5MZW3dPLVnC816YoRmhgZoBmgGaAZoBmgGaAZoDpnyQdIsM1jI2zZeHPjzdPxHaHubxqm7Uw91vY+f2f29C17Prf+b8jq1UhakRxbjfUzW8XVuwlP1jAORGpIRSdKkDLsPWKjCuc9nBnGF02YbsRVj05jl9HxDJ9fgr2kPrej7bHdh6QNSjkI38BmbotXz0/38EdtF2x6XBkBeLQTGspBbAOoequ2WwfWIHZDKTzrDp2CkUxdMAdRMDqo04yy8nWA629hA0xBY5AEbHuIDdfMbZn8I6QieXqxDKnZ1gtjuS3crseeLlR56W8KxKGyr395/gypXZNVrJCgFAcL6bP/bMv+bF/sir02Df6ReD+rKLEr9T5o6xfPm+tl1HAUtju3WQA47yd9xjGk89W3nF+1l29ScqBIUAoBQCgLFykezyBOzyZsbZx3n3D8qlG7yRCcYay5Gr3vSmwhl6vqyxQhS0aKVUpsO8Z0+QON67YYKvOO19SsqY7CUp7FtOiyVvwbBaQQSIkkaoyMAVIG2Mk8veTt41yT24ScZanfCFKcVKKVjOAxsO6tZvLUtuh3ZEPfkgHwzz9w/IVlN8jFkRFrx6xmlESSws/Idnn3YDEYbbwNbpUasY3ayIKcG7E0sSg5CqD4gDP/wB3rTc2WEsgVWZiAqgsSdgANyfdiiTbsg3Y88dMePm9upJt9A7EQPdGvL8Tux8z5V6nC0FRpqPPn4nn8TV3s2+XIhM10nOM0BK9GOD+l3KW/WdXrDHVp1Y0qW5ZHh41oxFbc03O1zdQo72ezexmcR6NARQz2twt1HLL6OCqPGwlI1BNDb7jvqFPE3k41I7LSvrfI2Tw2SlB3zt5mFd9HbqKWOGS3kWSX/lrgHV4gEHBI799s1sjiaUouSlktTXLD1IyUWs2Zlj0QuGu4rSVDC0oLBmGRpUEsRg9o7cge8cq1zxlNU3Ui72Jxwk3NQlkYvHuHQwlBDcmbOQ6tE8LxkY5q/jn9qnRqznfajbzumRrUow0d/KxE5reaBmgLltctG6SIxV0IZSO5lOQfzqMoqScXoyUW4u6PRnRfja3ltHcLgFhh19lx6y/ny8iD315TEUXRqOD9o9FSqKpBSRa4xdXCzRiFCynTkaMqcuocF8gJiPJB8Ryb1TCKjbMk78jCtuJXehT6CoYRsVAJXToH/KwRzLaAANmCucjABk4x6mLvoXYuKXetAbbKuVycMMA9UG57jZpHyeXV6ObA1jZjbUzdmLw3j95IkTmzwHTWdnXfqkfRgjIIdiuTs2nbGalKEE2rmFJsmeE3czvKs0QTQEKkatLagSwDNgkgjwA3G5OQNckksiSbJOomRQCgOCdOX/tqb/Ni/2RV6PCP9IvB/cp8Qv1HodevmxxC29XtIwOQuTgOVxldWPWzpI5jONg1Av2MtnqTtayQoBQCgFAcv6W8Z9KvIrbSeril6s+s2sllVjpUg9xAAOdzuM1e4ShuaLqXzav4HmsdiuIxEaVslK3jnbRf1zM/ifDIOpkC2yKVRiGEV1qBUEg7qoXlzZseOeVaaVWptq8ufWP5f8ASOmvQouk7QSyfKX4VvNl35M+NZU2ZXdA0itnmCwyMd27Z/P8cdpULPerwHY+K2o7lrTO/mb2xwMnuqpLw5fPe/8AEp55maZLW1iLlFYanA1HkeyCwBznOwA79rVQ3EVHJyb9+hyN7xt8kR/GOF2pt/TLCV/qmUSI3rIWPYbfcHVjxB7jtvsp1Km3u6q10IyjG21A6f0e4wt3Ak6qVzkFTvpYHBGe8efgaq61J05bLOuEtpXNJ+WDpJ1cS2UZ7cw1S47owdl/1EfkD41YdmYfalvXotPH/Dix1bZjsLmcfzV6VFhmgsM0Fid6E8XjtbyOeXVoUODpGT2kZRtnxNc2LpSq0nCOuR0YaoqdTakZdt0tMs9r6YqG2hfWYYkVF1EEB9I5kEg7nkD4mtcsKowlun3nzbNixG1Nbf7VyJubpTYk2UbqZY4JZHfTbpCmHVtBEStyDEEjmcE+Vc6w1fvtZNpc7v1Nzr0u6nnZ9LGPxHpJaP6AnWXAFsZtUkEUduQZMaGRASAMjcd/41OGHqrbdlnbJu+nVmJVqb2VfS+isYfTbpFFcQ28SSSTyRFma4kjWNtLco8Dn5nyHPNTwlCVOUpNWT5J38zXia0ZxUVm+pqGa7zisM0Fhmgsbv8AJV0k9HuuodvqrkhfJZeSN+Pqn3r4VXdo4feU9tar6Hdgq2xLZejO4154uBQCgFAKAUAoBQHnzp4/9uTf5sP+yGvQYV/pV4P7lZWX/P6HepLMGRZNTgr9kHsnZgCRju1tyxz3zgYoL5WLKxk1gyKAUAoBQGscS6HW7z+klmQlw7L2SjNkcwR9o899813U8dVjDd65eZXVezaMqu9eTv5X/wBF6tq0ZUtLiTMakvI6n1gWVWcrtg428MA5FIOqpXyy+SXrZXM1FRcWm3nlq2vJN2Mvo70XhtCzIXZ2Gks2Mgc8DAGBsPyrXiMXOsknoTwuBpYZtxzb5snDXKdpqVv0atrWWXQ8hE6lGt8qQyPkADkQM53Lbb711yr1KkVdaczSqcYv7DjNtbTRLaapLeMNnTGiANhiq74IA1g+BJA8RlTlUjLb1fzElFrZ0JXEHDrNjuIoFLEk5ZiT497MxwPMgVq79ep82SezThfkjzxxjib3M8txIe1I2o+Q5Ko8gAAPdXp6VNU4KEeRR1JucnJmHmthrGaAZoBmgGaAZoBmgGaAZoBmgGaAZrBk9A/Jz0k9NtFLnM0OI5fEn7L/AOoD8w3hXm8bh9zUy0en4LvDVd5D58zaq4zoFAKAUAoBQGs9P+O3Flbek28Mcqofrg2rKqeTjHcDz9+eQNdGHpQqS2ZO3QhOTiro8+8a6QNc3j3rIqszI5UE6coEAG+/2P3q7p01Cnu7lfKW1PaO2/Jz0xuuItK728UcEfZ1gsS0hwdAztspyT5r47VGKw8KNkndndSqOeZvdcZtFAKAUAoDGnkRkkDKxUZRgY3OQeYAxlhvzGRzrKbTuiMkpJp6GNNBBp1mJiHOcCOQnfVnKhcgHU2QRjtHxqaqT6kHSg9UZslwAyqQ+W5YRyPxYDA/E1rNoFwC5TD5G+dDhe77eNJ5+NAWWMcmvVGW0jB1RNuM5wNS9oZUHbPIeVSTa0ZiyZbjEIRnEWBnJHUsGJJBzo06jvg5x3eVNqXUWRoPyqyyXJS1hltVjQ65ddxDGxf7KlWYEADffvI8KssAo07zknflk2ceKvPupr1OefNWb76y/i7f+erPio9H/FnDw76r1HzVm++sv4u3/npxUej/AIscO+q9R81ZvvrL+Lt/56cVHo/4scO+q9R81ZvvrL+Lt/56cVHo/wCLHDvqvUfNWb76y/i7f+enFR6P+LHDvqvUfNWb76y/i7f+enFR6P8Aixw76r1HzVm++sv4u3/npxUej/ixw76r1HzVm++sv4u3/npxUej/AIscO+q9R81ZvvrL+Lt/56cVHo/4scO+q9R81ZvvrL+Lt/56cVHo/wCLHDvqvUfNWb76y/i7f+enFR6P+LHDvqvUfNWb76y/i7f+enFR6P8Aixw76r1HzVm++sv4u3/npxUej/ixw76r1Nh6C281jdpKZrPqm+rmAu7f1D9rGvmp3/Md9c2LlCtT2bO/Lus6MPGVKV7q3idpN0uVHaOrcFVZlwf8QGkfiaorFmfVuAXKYfI3zocL3faxpPPuP/asApjulIYgP2OeY5B48gV7XLuzQD0tdGvEmOWOrk1eHqadX7UsCoTjsbP29x2H22zvt2f9WPDnQF2gKJoldWRgGVgVYEZBB2II7xisp2zQPPXSH5M7lOJLa28btBM2qKXDMsaH1g7dxTfmcsNPecVcU8ZF09qWq5HLKh3stDvHAeER2lvFbQjCRjA8WPNmP+InJPvqpqTc5OTOlKysSFQMigFAKAUAoBQCgFAKAg+mfSBbG0knOC3qRKftSN6o9w3Y+Smt+HoutUUfXwNdWooR2jzZPMzszuSzOSzMeZZjkk+ZJr0ySSsikbbd2UZrJgZoBmgGaAZoBmgGaAZoBmgGaAZoBmgGaAZoDt3yO9JeutzZyN9ZbjsZ5tDyH/Sez7itUXaNDYnvFo/r/pa4SrtR2XqjYeLcYuopyqWpli30lQ2olYZZCpPIBnVFDYIBJBGStccYRazfu50ttci1J0iul39AkYYQgL1mrtddqO6Y2EQ7Oc5dQeYNNiPUxtPoXl45c6wnoLZIjydThVL9Tq7XVkEDrH5ZP1Rzp1DGNiNtTN30M7o3xCWeBXnhaGTYMrBl30qdQB5A5yBk45EhgyjE4qLsmZi7rMlKgZMe5voo89ZLGmFMh1Mq4RSAznJ2UEjJ5bisqLehi6LMnGLdTKGuIAYcGUGRAYwcYLb9nORz8azsSyy1G0hDxi3dkRLiBmkXWirIhZ1OrDKAcley249k+FHCSzsLozqiZFAKAh+lHHVtIGkOkudo0Jxqbb9hnJ/+a20aTqSsYbsaHxbjF88K3vpKxrhSIo8jAJC6iDnVknkc13Qp0lLd2v8ANkW2b90X4uLq2jl1KXwBKB9lwBqGO7x/GuGtT3c2vQkmS1ajJrnF+kTrP6LbRLLKVJzrACtvsR3kAZIyO6pKOV2VeJ7QlGruKMdqVuunvyI7g3GLuO4SK8wFl1KpbQuGUZ2K7EEkDzyMVlpWyOTC4vFU66p4nSV7aarw9PobpUC/PP8A8qnSf0u7MaNmG3zGmOTP/wCY/wCY0jyXPfV/gaG7p3erKvFVNuVlojSs13HLYZoLDNBYZoLDNBYZoZsVzRsjFXVlYcwwKkZ3Gx35VhSTV0HFp2ZRmsmLF61tZJDpijkkbGcIrOceOFBOKjKcY5t2JRg5aFt1IJBBBGxBGCCOYx41lO5hqxTmsmLDNBYZoLDNBYZoLEj0f4y9pcxXMfOM5IzgMp2ZD5EZHlse6tVamqsHBmynNwldHe5OI3c3/ibNY3t3gPUhmUFpWRnSQjnpDBY8agQS+RsCPPOEYvZnrfMttpvOJkSG+1jGnsPuQqBHTB5ZkLgnbOcYPLUN6h3CWZYsn4kHQOsZQlNZOjKjq4NY2bcaxNvzBKY1DIGXu7Ze/eRhbQ67iOFbqwToXUmIgOsD9vDdaSFKnbYnA3APNaA7xtFaiZB9Iei8N5qMuc9W0SkYymvPaHiQSDg5GVU4yBWyFRw0IyinqWpOiaMcGWXSGd0UaV0mWZJpO2oD7suxztnO5AIb1+/Cw2S5wvo2sEokSVz2dLBt9XbmfUTndy0xJJ5nfvpKo5KzCjYna1khQCgNU6edH0uViYziJo8gZBYMG05GAc5BA5f/AJ1Yas6bate5hq5FSdG1aEQ+k2ujfA1NyIXRvqycN2sHblWxVmpbVmYsTnQjgSWscgWZZWdgWK4wMDsjGT3HOfOtOIquo1lYylY2SucyaVY9FHjvesaSIoS7AHdyCD9llI2J3NTcsrFBR7LlTxe8ck1n4+jRd470Uedo9DxquWLZGCA2nGwG52O2QPzNIysTxvZksQ47LSWd/O3vki38qPSb0Kz0RseunzHHvuq47cn4A4B8WFdOCob2pd6L3Yta09iB57Bq/KoZoBmgGaAZoBmgKZT2T7jWVqSis0de4xwlJeL8VmlhSWOBYAVIndtUkcYUiOHdvVOc8tj3GqiFRxw8Ixdm79Or5s73TUqsm10LJ6IW8N5fN6MslvEIQkZ9JldWmUEqEiyzDJ9ZuW3Pes8TOVOKvZu/RaeJhUIqTyyLtra+h3HFbSG2vzb9ZDia0OqeImNZAm/aZBrPjgc86qSlvYwnJq9nk9HnYkobDaSy+Ro/yhWbw38ySTtOxCOXYBWwyrpVgNgwXA92DtnFduEmpUk0rHJiItTd2a5mug0DNAM0AzQDNAM0B1f5E+k+Gbh8jbNmSDPtc5I/xHbHufxqr7RoX/5V5nfhKn/RnYaqDtFAKAUAoBQCgFAKAUBant1f11VseIB586ym1oCyeGQkY6mP/pHn5eZ/Os7cuoLlpaJEumNQo5nxJ8SeZPmaSk5agv1EGHccMickumSTk7ny8/L/AL+NZuaZ4enN3kihuHwRnriir1YzqJOFCjnzwAAM/me80V3kYWGpKW1bNHnLpv0jN9eST79WOxCp7o1zjbxO7HzbHdXosPRVKmo8+ficVae3IgM1vNIzQDNAM0AzQDNAM0Blx8VnV2kWecO40s4kcMw5YLA5IwOR8KhsQatZW8Ce3K97hOKzgswuJwzjSxEjgso2Ck53HkabENLL0G3LqIuKzq7SrcTrI2zOsjhmA2ALA5O1HCDVmlbwCnJO9zHllLEszFmJySSSST3kncmpKyyRF55sozWTAzQDNAM0AzQDNAXrS6eKRJY2KvGwdWHcynINYklJWehKLcXdHp3olx5L20iuUwCww6+xINnX8+XiCD315utSdKbiy1hNSjcmK1ExQCgFAKAUAoBQCgFAKAUAoBQFm7tlljeKRQySKUdTyKsCGH4g1mMnF3QNJ+iPh3sz/qmuzj63tGnh4dD59EfDvZn/AFT8KcfW9oxw8Og+iPh3sz/qn4U4+t7Q4eHQfRHw72Z/1T8KcfW9ocPDoPoj4d7M/wCqfhTj63tDh4dB9EfDvZn/AFT8KcfW9ocPDoPoj4d7M/6p+FOPre0OHh0H0R8O9mf9U/CnH1vaHDw6D6I+HezP+qfhTj63tDh4dB9EfDvZn/VPwpx9b2hw8Og+iPh3sz/qn4U4+t7Q4eHQfRHw72Z/1T8KcfW9ocPDoPoj4d7M/wCqfhTj63tDh4dB9EfDvZn/AFT8KcfW9ocPDoPoj4d7M/6p+FOPre0OHh0H0R8O9mf9U/CnH1vaHDw6D6I+HezP+qfhTj63tDh4dB9EfDvZn/VPwpx9b2hw8Og+iPh3sz/qn4U4+t7Q4eHQ2no50fgsoeot1KqWLnJLFmIAJJPfhQPwFc1WrKrLakbYxUVZEpWskKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoDWemnTe24cg60l5XGUhTGphy1HOyrnvPgcZ5VupUJVHkRlJR1OW3ny23hbMVtaIvg/WSn/qDIP2rtWBhzbNO++RY+mriH3Vj+nN/WrPBU+r9+Q3z6D6auIfdWP6c39anBU+r9+Q3z6D6auIfdWP6c39anBU+r9+Q3z6D6auIfdWP6c39anBU+r9+Q3z6D6auIfdWP6c39anBU+r9+Q3z6D6auIfdWP6c39anBU+r9+Q3z6D6auIfdWP6c39anBU+r9+Q3z6Hf6qzoFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgLdzMER3Y4VAWY+SjJ/YVlK+QPJXHeLyXdxLdSk6pW1YznSv2UHkowPwq9hBQioo45yuybtOGoGiZ4l0PHbquRs0jtHqx4nTqzXn62MqbE4wn3lKq38oxUrX6Z2sXtLC01KMpR7rjTS+cm43t1yvc+2ttHIOs6iPUvWqFVGKnQ0IDGMHLELIxwOdZrVqtKW73js9h3bSeanltNZJuKM0qVKr39hXW0rJO2Tir2vnZNl7hvC9LXzpax3U8PUmOHQ5VUlDGWTqFbU+jsLjOF6zJ5VY4avvaMG20nfO93k7fu0z1vzK3FUd3Wkl8tFbVX05H2TgJmS0drR4NV3LHedXFKogixaEFg+oxgK7uNR5E91dCqbN875K3z1OdwvyJiDhEbTMt3w2K0hguYI4pMSIJVa4SNomZ2InDQln1jloznDVrc3buyu2n9P6zJWzzRidH+ACCCVru0Xr+tlWFJ0P1nVWs5VVQ41gzGMdn1iVAPKs1Km1JbLyyvbx/BGMbLPUg+l1kEW0kNuttPMjtNAoZAulyscgjYlo9a57PLs5GM1tpSvdXuloyNRZXNdrcaz2PXnzuFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgFAKAUAoBQCgIvpSM2N4B3wS/+m1Tp/uXiYeh5VHD5PY/dfjV3to49llZtJttm7Pq9obe7fao9zP565Em5u2emgW0mGMBhjcYYbE8zzo9h6/QJzWj/ALEdrMra11BhvqDgNk8zkHNZvG1uRjvXuXIo7ldWlpV1btiTGo+Jw2/Pvo3B6jvFuS1mYKramCjCguCFHgATsNu6ilFaDvFbQ3BZWJkLJgKxk3UDkAdWRjypeGg7xbks5mJZgzMdySwJPvJOTWVKKMNNlP8Aw+T2P3X4020Nln//2Q==" alt="Cloud Service Models">
-          <div style="margin-top:10px">
-            <div style="margin-bottom: 15px;">
-              <strong style="color:var(--primary)"><i class="fas fa-layer-group"></i> IaaS (Infrastructure as a Service)</strong>
-              <p style="font-size:0.9rem; margin-bottom:5px">Cung cấp "phần cứng ảo" (CPU, RAM, Disk). Người dùng tự cài OS và quản lý. <br><i>Ví dụ: AWS EC2, Google Compute Engine.</i></p>
-            </div>
-            <div style="margin-bottom: 15px;">
-              <strong style="color:var(--secondary)"><i class="fas fa-code"></i> PaaS (Platform as a Service)</strong>
-              <p style="font-size:0.9rem; margin-bottom:5px">Cung cấp môi trường để phát triển và deploy code, nhà cung cấp lo phần hạ tầng bên dưới. <br><i>Ví dụ: Heroku, Google App Engine, Cloudflare Pages.</i></p>
-            </div>
-            <div>
-              <strong style="color:var(--accent)"><i class="fas fa-th"></i> SaaS (Software as a Service)</strong>
-              <p style="font-size:0.9rem; margin-bottom:5px">Phần mềm hoàn chỉnh chạy trên cloud. <br><i>Ví dụ: Gmail, Dropbox, Office 365.</i></p>
-            </div>
-          </div>
-        </div>
-      </div>
+  <p>
+    👉 Link hình ảnh kết quả kiểm tra SSL:
+    <a href="https://link-hinh-ssl-labs" target="_blank">
+      Xem hình kết quả SSL Labs
+    </a>
+  </p>
+</div>
 
-      <h2 class="section-title" id="tech"><i class="fab fa-cloudflare"></i> 2. Cloudflare Pages & Web Tĩnh</h2>
-      <div class="card" style="margin-bottom: 30px;">
-        <h3>Tại sao chọn Cloudflare Pages?</h3>
-        <img src="data:image/jpeg;base64,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" alt="Cloudflare Pages benefits">
-        <p>Cloudflare Pages là một nền tảng <b>JAMstack</b> (JavaScript, APIs, Markup) hiện đại. Nó cho phép các nhà phát triển front-end cộng tác và triển khai các trang web tĩnh (Static Site) và SSR (Server-side Rendering) một cách nhanh chóng.</p>
-        
-        <h3 style="margin-top: 30px;">Quy trình hoạt động cơ bản (Deployment Workflow)</h3>
-        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAACQCAMAAAB3YPNYAAABaFBMVEX////R9P/n4f//1+/I/+Xp/7nc6f/u7u7f7P/q5P/x8fHv/737+/vV+f/s/7vV1dWNjY3KysrS0tLo6OjM/+r/3PXf39/t5/++vr6mpqa3t7ecnJzHx8erq6vi4uLq6uqIiIgjIyOYmJjCvtU0NDR4eHgpJyOBgYEoKChRUVFMTEx1dXVAQEBgYGA3Nzfi8P+XrLPb76+GhJFSXVi46dHoxdr/6fZpaWnP2++KnKJ6gWrZ1O/aus1GREqAc3tta3S6xNWstcTa/+6GkHJuf3eCnJChyLVuc2K0sMWQl6Kfp7Ty//nt/8eu2sVyhXzt+//O4aa9zpqpt4yYo3/z8P++pLMdJCDMx+D/5fWhjZkXFxePsqP//+/4/9s1MT1kcGuwy9ReYVfA3+mznKoKCgqFpJWgsqvl//P2/9SHjnmMkIXB7eEtJzj8//NPUUqts6DV/9fX28zp2OIaIB2nrZl+e3oGIhUwOjSYpPiDAAAeYklEQVR4nO2diUPaWtrGT93AGM2CxORkAVMohCRQudLgUsFaF6jWBa312ta2Tm87c+d2Zjrj13//e08CmARcbqXXLjwtJDkJan68vOc5SwJCffXVV1999dVXX339bKI5jDXftir7Nhz10tfyakJwgkURg6ZMJ1zqilGVL/0jv1/J2Vwuy3vrNDzSad9OSbzspWw2z4r5YFni10jGEHCq82glm0sl0fkv+jlE5xVkphFrpZFs2QqydSTmDAk5ImXQSSyciRZG2LJd0LxhsAhLeo4hG9OMoEkG0uxchuZMpErItMw8ZeRkKIWfpiAxwxsivIgcrjtItaCUg3fNchQUMXMSwoYVu93z/8py8SZVS/w1YSXZbMxWqZSNp4UU5qapnKzkc5mzyK+qPA0RR1sGToly3rYl5PICiA6yLWzIsJRNNS+eGbShJ2AXzurTjJZKnQkpyWHhSNWQLB2n2GmBmRZZCzmmlEK/muKPHcmAV51mTMORKVNGluio2nQCpTjDNFIRQ1JTInaErOKkIAIjvzLIUM9SsaQOr5QNRAuSg/IYZZKSjc5YKYecHLJVAj2H9dQZnT9DSt5JQ8QiPgU7cphNJUVLsVOCZUNm55Lw2fihlUtlMdJzrIWlfC4r6FnRsYw8LdisJRC8iP+bZubZHMFwljeylGkjNQ8xF0tZqSQ/rUtZO8tHUrlpIZFKWVnO0ZEyLRu5FP5VSSkolk2aFrxW+BVek4PSv/FOnrU4x8mklLyZkm4bwNeVgCPwrKgCkgwsIBpTSIQHsEgxfIyCwBNpPoYMF4MCBwtwkJuJIxisgCiAgRDIBjwlMCVqAhgRUYvgGOJo8tGPYS8BkNfEcAJBSqZQToTfkkAcZm7vzP9iJW3/xrSVotobWXua790vclLGtNC7H/edSPATpLGaON9S1B7SheBXf56g7auvvvrqq6+++uqrr7766q7tH7un78YSGE88xymKwjMt8VDQ3uLPCxURq6ok1bHCVZvi4MjIbZ/HtykqlZ0mugePbPYekbcNy3utJ6+wuZa9F1Y+n0+Zt30i36aoFENTFEVvkw26EI2OlKkIRdPbBRptF6IjVNkTFEVHokQo2pK3JzpSs3JGH29XAV5CdWSkgNCIJ8J1pCWyKzri373d3kdwF0ZqqVStUOnj7SoqxUVbVJsr0RG/Wluo2+5CmcCNbiOzj7erzvEWUJBrSAVUCJVECwk9lZLd3vA+3u6iUkoLW4tfwc/xHHkIb7RQLt6zpOZQQ6aPt6uolNjCVmhm1aJTjpJqzM2tdfLkFm9v++kC3LxxPvzKdsH75NFkR4l/6/2Tr3FC35YAbxubuxItVqvl8nK5CmCXy4VMrVyul90dtB9vzbIMCRywK4xNG/sFZb+9A/0meSKH4N+Oj49/8x1E1n/s2R0u3jY2L4zTYBasWrVYq9Zr6ZFKtVxZrkXb9JuZoXrPtm0j58r4+PHjL7/8Yvzik91agtrbhkFeYZAFeUUun8rqt33+X1mAF40EVCmMlPPbtWKtbI5YVXO76tSq0WAaBrz5MplP8/7R0NCToaGhSRCadPXokW9j8gl6720/Ic9DQ+6xj+BVk7OrubxuJm/7/L+yOvBG62albBaq6WK1WKkWlytVs1gLewqCF733cDUXLua2CEGPZXM7sJfATaXYBMqkr/4Lv2sRvGGj69ZqbpXmPUbClqyJN0RwMsC3BXKoE/7k0Gr+1VPSS/HT4Q2tR7t74ejyOd7umgxtP/LtOc6nns66ruKHx5vI16M+ntGyD2I5OlItd7Jt4qWfDH2BAK6VZSFyXVeWydz2+X9lFXx4yxUbqjM3IZB/BTPqVE03gkkHTiEawou+hO5aLr967nczrLt48eHFFX/m5oeXL1/88RU5fCUlUsstbAWzXAbfANVZdLmwHK3V0mVjGXxErVpYXl6uFsvRG+Od/SVlmTrrKpnJJA0bNlZWVubXbePhw3w+RZS3Hj7MGbbtmOlMEg78+z/Y5Pz6+vqbNx8NsHW2mUl+N3Y5co43WoEANUfscrpaK5j1etVdFsyqsW0X3cJzvPV8eRuF8+s1Yjd/5tjGmzfrb2zDeOiZ5jfr8wD47yuu/kFwektSSFbn51fYlXM15q389zOdlMqf47WjZUgG6e1i1SxUIGDtcq1QgZjOlyvlqlOvRgN49wN4r4V68tiCRDAG2kQvXpLlBzQW0Evk7h7bfOkv3TxfHW48fLX3MXnb2K4rP95qJV2u1Zcr9ULdqUaLNWi3FeokR9RrIyPF4nIA7+9BcKuPH5N2g/sgrCfdx9MQ3ncWGvb0srlEm8N+TfwxfLEmxmYar/65MoOMs9vGdl358I6Q2ssdhnDXCgXP9XpLsnletRXq+dkAt63VR7NDT58OrW09niWPoaerk1uPt04eBw9btVo4NyeamD8EEb4cvkgAd+XVP+dnxv5Axnfj5/x4r68OvMdbk5Ora7Or706O1979cry2unYydDI09DgUvYA3xG8itN3C3g1u6tXKzMQw+IfvCG8qiDfa1eiGC6NhvGvvho5XZ7dWV1e3jsnj8fHx1tOh2TDep9aT8Kf/Q1ea3eA+lKk/Xrwk7sxI3ja26yqEN1p1alEywObLDpAeauXge7CtBvEODb17vOYlh6FjeLybfbo6dPx4ayuUHAAvuhpmhwDuw4//Op9RYfiu6dzevrMdPKXtZjl95842EU02trfH/wqcYYXx2iPpQjldh5pspGhWq9Xycr1qjxQrVX/mRagDr1evtSu1Ia+amwwaCsD7PlSXXSt2d1+9yn8EK2c3ZeVaazbp3SRdnHZIpOvT8uT1mpIj/nq7TKXOwUGoVo1abtnUwJsV6vWRdK1crtXAkqWDfREI4VQI77U0+TiE9zzRTkxckHRJ8DY+7u39S71//77bNy/rc7osy3NzknTfk6q6i7m27nfKAbv8119tHMBbiALTWrkS5Yvlar1eLi7X68vp+vJyOph8g3gnJ2fDrLeGutKffPwwAHdmp8V0YqexM3Mx3graHncFfzFZ23afEfIKYXP8Cr12UiZjXXrt8lfHO0KPVMvQtCgXxUKxHq1DM7hWiy6ToaGMPzkE8U4erz49mW2mhqbvXR068fxvIDn8e3P+4Zj/Mz+/vjMGUUsi983M3s7Y8Niwu0We/HhXHHTH0/Ydn7ZbpXfoO5cI4Nr37NeIvm28qOD180JybQ5mEidMOnUKgaqNRmL2HO/a48mT2Xcna8cnq5NrJ0+HVh/PPp20ns6enGwdH4P/XW3jHQviXQeejfXGcGNlZebj7t7M3puVicZYY6exvjO/PtMV73gAHGrRDlAPsb1z37jnvIYIp63bTQ4jNN0Oz9bkh6BjaC63keLDewyNh9mT4+PVoXdrJ5NraydrgHv10erW0NO1k0ePJ3+5AO/w/NjYzvzmyo6xNz/T2GzsrG8+nFkZW5n550yjMb8zEcDbFeB2q3S82153B8K5e2kCl1wKzv3leBN+vPtkLkO0QByQCzq6j9zxy/ZQfds68D68q8cna1sQvNCgWDuZfbo1u3rsxjNpXBxPvntqtQ8NRe+bnb3d9Zn1nYcT84C1ASE7v7u+sz78ZrPR2Nu9Bt5LorYZuve9zmVXdP7yixL3vwJeiN5CW/ABKlBUJBKLRCLlqOcfSSnabh0BbMmsPcSc4x3amgSfu/ZuduvkeHJ2dW3o3fHQGrSSJ4/fDUGdNzl7vOVVgB14Zxp7YzsrO8O7Y7sz8IDlzt5MY2YYyDb2/Ll33kaoK7/L8Y6/zuWTCXLbDBpOKhLJexdp0jRsJoSFBU2LxeBUKQpK9qdGR7vxoW82f5lK+WaSNieiNmegTrdnok63D2gdl/X73keeyT1e81xvs47zxjgn11ZtL8jfDw1trjwM2K8xqMPIw/s3tgdVnbdN9vjxGhfgvTApuDvn7uWtfPZ8Sm0+PHe2eWLT08Ftv0gHNHU1xgsl8GTa9PKyqHD8+eTp5oxqRSRzQjAWYb+7u1r1jvFVbUCu+7BQcwi5dSACy7vyyovbpjGYGB4bbppfUjIxM+OyDTtgEr1XpIGueM2z6gbR3SrD88rdjQ3F3ToXw/sXd+/yVfK80RSsHtZzeSOvXU2xx9Km/Xi7d6yHBt+fIPTBwzsBOddd7g03gHCDEJzZc3fA/4mZvRDfzaf2pWF6EV5bp0c9IfLZHx2l90cDcgtHB2g0NdpFU1MLxZStULdwWb3gxzvUfdA4RP09Qi8bHt7dxt78mIsXvNnwOlmb34XgHWvsQi3n4Z2YIR05Lt7xzJfhNVg04GnUW0ztD3TTKJrqUghw7+U2yM1Rrsbb6wtMBH9ygMDsmh1QIHwB74vGqxk3ahsru42Z3d354ZXh9ZU3kBHeQJqYn99dmd95s7LT2G28AU8BxmLe9Q+Pis4N8bbUBSPRfgd2AvezVR8ANxGZvjo52D0endp6FcQbDN/WvB30yFf4CKE/9jy8uysre/PDu7vrwyu7e8NvoK22M7+3O7+yAzE9vzmzspfbaTweXtnbXfHwznXiHT8vuQg9wTvanWcYZggvgZuyalCOrofX6HF3BuBtzydzA9Ol6k4ee/8Eonby0Xv3OIL1fRsvauLdmV/Z22uA5R17swPRCy2I3T1jdx7KwPzu7azsrQzP/2ceQnzvDcH7787ofXt/7m2L4twFfAneC8K1I3yDMb5QzFsq3TRl1HTiMhJED3I9vpOXkFpbIxNIj9fWtrbAPiZ+n/39P7FE7PdYQmM45fg3cnGWisU1KEjMgn6PxTRB8/BC+O5MwGMM/s3MwP9hiOSZsV2o73Yh85KSiZ3/7IzN7+y6h39Ih/GOz829dQDyOPlvwvNFeLsn287w9Uf5QtGyksKnkkCkaUxKAeMBtkmA80t4grMUmpeqKRzHL+YObONBDxNwLHWubDY7fS7YSvl3+ndk8w9nzm1Y0+76Czxb5pa8MOf3mu73Q6UD7+vX48m3Zua1OZe+kxy35zKv778NR/GfwBuIXTuf/5x65or81SmLnGHWPdHpZ83ybNZ/np8/H5SspfglvOgLvHP7gxHa7zaD2kpAaLrvdSwRCSkmkOsPBXcH9a9XF/Y6hvUStfzvH8g0wuTuv75j3s8k36bH517Dv/EM6e7tgpcOxOiUL0hHL0zLOenToqeSpn1KUO6pUqVS6VMkUXL1KfHpUwSKvecIlAzGF5/JYXZtaUle8rkLuv2E2NYqvknbpaVueC/oR3+JWqNwgDfXEb0Z5+3rDOlBd946r8376TtOugNvbi6Ad/RucWOUeDQCdnRj4wLA8dxpfBBEnuLPBwefu5962i16MOiJJus0KXu+j7zC+NGzC6s3mUG6ossiCzRlSk1nEBJZScrQSKfSSUGHbYnvweUpSrfo7T6Y+QG1Bj1forTVUXu9Bu/w9u34/ftvYQFb4B8yHXiLwZqtsrB0OHA4sHC4sDC6cHg4BUvItKML3fH6hVCgqI05UJjOXli9qZKsSmcShgDXGUUVBaQjXYLDdY5RsWTQSMKseuPk3cQbHG570TV8N1ErfDdRJn+ROZh76+6BJ8d+fRXepYHKhl28u1S5WxlwoNVbq9yt1Y2BSjCKR43TDnIoyPN5F7pwkJG76LSlBJ+gVIbmaaSpKI0hucoxAXAyDFYQowiIicWEG1+XraS8eAwAfdE1fAGvF76bLxGb6k7X73nHx8NvQRjvVKV4OGDtF4vFqWLx7sZGpVabqlQ2avUg3ikDh4PzQTt4O+LaxxxRl11ZTbHtpkf4fpYye1OubbxjZKznxYsJb+rYxJg79ZSUAcUxePoDvXCHgybGoHxzeNOdmapfiPdSWSG8xYXRgcpUHdjetaY2Noq1ykKlNnDvbggvaYIF4jN+apaa6ZjkjQsQP0APmP92r95an3qBbt+3jqHF3ndlKKndPdD/1Abof1Ljf1gk1nF391/KuXZ33YPEdgGX+SK84yG8AwvuA3Lt6OgCqeEO3fVQ6gW85HIl2k9XLS2WBkvx0sFgZTFeWowPlgYHF8OU6eeD8YP/dq3eIAGQTCCpiow0aKxQtCDpjI4ipO851ju/LFgPXeXcp9xDMhUhBZ74nz7jPP0q7x5lWfmma85a+T/PdhuhMN7racpgQ3gr+/CILy1WFkvO4qJ9enRqHB3Z4eglr4gfff7U5bQlRcVgEiG0VazKMmQDjHVB0lhJMUX5K198RsYOWraZ3OvgD99UdZoISfeujbU9uAkvDldtU1MD4VC9EO8DP954vAR4B0+XFo+eH5XiS6cHlaOjUij1PveOfdglGFVBT8APTWqcLGu6yqg6ZmXEStgROVi/aIwKgpskEKHjJ0YEWqNgN/HK2s0Nc1e83TvY20PyHXhHFyoVSL2e7yXdvKOjA+2H/zhDDeE9qADXpaPFo0ppCWJ4afG0tLR4cNA9B+e6VG+0SItAISHSDAUrIqJ4QQOzwFECRYuRi/DqNK3QCSRFACQ0+xh4UJRGI14WkaILKpKgWLz5jWCkbrm3O972oFEn3srC3YHK4eHoAFiFw8O7U4cb4HnrCwMbwbpt1L1Fs79uI9UZYVka9Cq2S+zD4OCn/MWttz8pHVEqm1FYnUI4BvkE0oqUgXqXFTK8ysaSuoPBNbPJm/4eKdXF925fPjYPLzMCeBeKkBycdGXKrtcGKkVwDRsQzRu1Yj2UMSwSvZcivEz7/HSvZqtACwTbMZwGvEIyDRkGi5iFTJHkcrSqx1RIOpLOqTe2dVK3ZsV2YGpO64D2zB1IvnYI7/7C4eeFCjhee+HzQvFusWbcdWqHC7ViIHoX8nX4lX5i8cvjNSgaqdkeDc7RXCSSQFqEguYd5G6FQhwiDcMILzARCpJCBAkJ6uaTNyTDm0rmPW9fNLHMo9o8Cl5WCSaHYqVyWNkv3nWK0KQAE7xxWDysFOu1YgivVQ8Yh0FIuEteevA4xwcXjy4mvj/4fCnX87uP0dJXvNOzZM3NzZFrsObItEjZnQQpt1bm5jJp03Sc5nRUsnAc8yyT1I1Qs8Kt0KBim/IWlQHSzpgaaP4P4N33E1uKLx4NHh3ES6fxA3C/wHaxVDotdaXrJmnb7OmUFEFBfAwMMyIB3csf3NRrB4B5cghHo3mrg5x3+Vt7jxlU2JgFNXpYrLf3+wc5Cd4HIbynzuJSyVg6gDi2T09LRwfOUWfHTxvxUg7acDcXGI4YTyNO4pDC8jJNDJl0Db4KZJAIvBmJ7pUs1/HZ2u522JXHVC7BOxXs/h1tD3pO0cQ5PA/itQcr8VNoVnwuLR0Qf3Z0WiFBfAHd08+lwV6Eb1KTM5gYBYeXdRpaH2wyYeMr+bIMYgRRolGS1xSKR5pG7F+MguKISGu8HOtNczyAN0Q6PIzRHteYQkYIb3ypUiLeN34EoI+g1XZ6cHpwAOsX0F18dhrvyciQrkg6MQrYiUkyJ4mqnlEzySubERKOJVnyBRQ6sjRW1xzYYnVOcrCaFFSHSfbIOQbw7gcbD+Gx9/12+Lp4O/JpPB53a7Z4SxfWbWRYqEdVm+B1BiUohgbLoKEEoq8xYipm1LQkShRiUQYlk7LEMjKrC45gMyxWkijJMj0Z1w5Gb2g0ODBMRPC29tNBvJd4snjXfXZvEu+XK0H6jIiDo+EfRfoVYEla0OTLU9xCsSffX+HhbUVtMzy9zdH90Bj9FGqF7z7gPfdl8dPSeaAGzcLiQUevGckkn0uXjWl+sdRv7htOKsX9qakpNyuMTk0hGtbhDdx3n0FTAZEdRPvky57OjUMJ6rXKAckGiwfxpZKbFTwLDLVdR68ZvBvPDnqVGhCDE1JEVZCIoVGsqDIlaYzI0Vc5YPfLBSlFba51U0++oCpj2aTHMw+yLPBwFTPt93CVgJoF6XTa8uGNF8GEAUYwZAf26cHg4tJp/PTgKF5aKrl+LRS+8cXPS/GepQZWYUmNhlVFZCOyjHRKh9pOu6oDk1UTTETjdVoySXuEwiKNKRWJMUxFMGLEBC9d/vWO1xQjeyrqzRX3HhKst6WzpJ0C63rN23Pmsk9n2Jx0bhziS6Q78mjxqLR0ugjRWxk8KtlHS4POYoVYhw73YBmDvUsNMpJkPqkzus5IqqRIWFIxJUBddfnLbEFSBVGVcMQhvW6KgsWkqTPpNMvpEm+qWGdu8+vVbNnXobMETEsQvXEHvBhAhs3/G1xaPDo1YD3sfeMOON7eNYhpMrsk6U7GotxaijwnuKumC2Yg1NkYlhXWjCBVVmSd580ExhlKYmUpSUtk0fmymC5gMeJlFCHGdzmiN/MUbf3cOEDslpYg5RpLi4NLzeRwFIemxWnp4GjxNNjnGz+CxNtr1xCe4EZGmy8XjdozVdw3iG5PW6HbxV2yA0sLKk9hRhI1xGGJpBWR5kQyqi3RvMgwUm+GVWzWh/dgifivuN2yvm37C/8XK226z91jnx3Fv4pr+CsUURGFMVaQTTIHDbmIY6ExQ77xURdVVlVZqjcD2jbrH2hbdPPwYodHGCQ+rZWjn0NdGC9BtdbD1HBjtSKUarrczr6GgHSdY1UmiWUdLKAmsaouaxk6Q2a+QMuEksVkj/Dq/v6y57TXCdlt6ki8VegmayM3eMsNCk+aTL7VUSTzKlSd9A07PKsIFCf1ajrFzQRVG/2gTZOiqcinUqkU8Uqe7z/3oJPFA/TATQ9kmglpT/TQNdxArKqYGOsxCUXkmCyKWIDqUKLlng1S3Uw2uUXBxxyZCvD5szsXIEvmnD57Rm4BlvM6Q93buOaMnPGRzCrI5RhEqrVvIzVAntRpFbtZM0npLJ1hTDaSwXzysldRLOslEcZb8BpiWtUq73UjaT1pOAoiudxMJDo4EH3zW6AAq5LcvA+bDp7ZvTExFFsiP60++CZSQzdR17FUOtIZVkhiJaayGsfjCBIzWhLqOVXEUK1poqSmezFL1q9rhqMhW8ke/+ae6jqnIUektESaI4JOy2rSdcAsQEcquDRJcCCKutFNmKTU307BqDnXU1d6NOho553e/KCeiFZb0ar9iRE6XYY2iODoCUllIyKxD7EMwwI3SYaFjnEikukypSIpKBjhJLQMBWgoKpEMpUsixTIKNMpVjetJ+9Do/eDll0tKipiDBrAosEpGyKicriau3cnQrP+giXe94xOOdKaTtyYJv1eXJJ1noS2vxmhJV1RVU+2rf8TVUr+lm1qyDJYUjGWRRZhSKagdePFaH64m0Wak0PR1rlenOYRjGUjMImRnTsNYwpwsxlhRFuGvEEW21+n61iXKWBSEmC5yrJZkdCxoSLzG1HcJNRu9knuoCm1j5sbj0lLypj/hOxB9je4C2uF1M4HPaKSyEqaxihNs+k85Mf8bSHUp+3F1jbOkJWTw2JQppDK6TKkQ9Vi+svvIJ8pfi0k/B9c/IbC3SMEShTg2lmATYsz9ApKrXqVlJC4JlaesqaKYFDkzAm1elpfPGC5JqayisgJ4imTnx4Dwj7j/+7pYCajUoAUu4rOIakpaGpsc4hVk86qsqiYjsbJqAvqOt0kkIyk6vBMocJ2fRP8k+eSaok0c0yISR4s0z6kRlVYp0pspwgcBmrlI5GmdUwWpY2g6LfKSLGFy1Q4mUzdYTqJwUmBFeKtkVv1u7n/9lUVd0W5Q2K7TcfkMlqANLmtp0p5RESPSkEVEifhnPan2qOf+BxFEH+X3txH/B7zr/QQiMcRpqhKTFBphSCaQ+QWJknhB0uQIr8Wu6Jv+uaRiypv404Ti+6YtGn0bvczfqRjR1kjPoXgGGNWMpmdQUlFNFdHpJMNhkaVNu6s78LdzvQNoFPQXf/0dor5BOYrN6BKSREiXpsoBWZVOCzq5CB0cBSVjm1G68KVlmm6OudLN/jbdbTbSXpOEJka8L6QghWZomYEnxBDjwIgig8ApZDD4BgG2Ed/ZtmZ0m0qzvIENioXKTDpTEZURzmzNwKauYE7RzYjTk+6gH1WXWgpeMURFxdjgVdXhZDOmI0qK2IKSIT1SssrpjpLuVXfxTyhRSygcBaEtiJQguOHO8QISBMRg0pXEC2KM+pb6IX8sYb1vzb5cNIXaDbnmjVMZFPFb5M5Lffu6tjSZ1hMoATwpRiKz8AVIvbwSQ0IEDBkVoYR+9N5AvKrZ6Ri5XpfFGMuKjGNOhk/rIrlSQRYzqvjdfPPLtygBc6wokgukdVXXpaSWVmWsyGSERcYO5jls8/2K7cvFRSiaYoAgJZB7VAsCTVEJjkZcAgx0jEZ85Oa3Fuqrr7766quvvvrqq6+++rqWaG/YozmUSrkjS2RUybvNW2vR1xeK4pgEQwmMJqCYENN4BthCEWI0TYgxgkDu3H3bf+N3LCqWEBgmwvAMEhiBMIUmNRdDwJaBbfgv9PA2nT+fyDduIYqmKe+WmCRVkHglxbTQKumrr7766quvvvrqq6/vU/8P9lUejvEwxLYAAAAASUVORK5CYII=" class="workflow-img" alt="Cloudflare Pages Workflow Diagram">
-        <div class="workflow">
-          <div class="step">
-            <strong>1. Kết nối Git</strong>
-            <span>Liên kết tài khoản GitHub/GitLab. Chọn repository chứa mã nguồn website.</span>
-          </div>
-          <div class="step">
-            <strong>2. Tự động Build</strong>
-            <span>Khi bạn `git push` code mới, Cloudflare tự động chạy lệnh build (ví dụ: `npm run build` cho React/Vue/Next.js) để tạo ra các file tĩnh.</span>
-          </div>
-          <div class="step">
-            <strong>3. Deploy toàn cầu</strong>
-            <span>Kết quả build (các file HTML, CSS, JS, ảnh) được phân phối ngay lập tức tới 275+ trung tâm dữ liệu toàn cầu của Cloudflare (Edge Network).</span>
-          </div>
-        </div>
+  <footer>
+    © 2025 — Cloudflare Zero Trust Report
+  </footer>
 
-        <ul class="feature-list">
-          <li><b>Preview Deployments:</b> Tạo một đường dẫn (URL) riêng biệt cho mỗi Pull Request để kiểm tra các thay đổi trước khi merge code chính thức, giúp quá trình review dễ dàng hơn.</li>
-          <li><b>Tích hợp CDN miễn phí:</b> Nội dung được cache tại server gần người dùng nhất, giảm độ trễ (latency) xuống mili giây, cải thiện đáng kể tốc độ tải trang.</li>
-          <li><b>Bảo mật mặc định:</b> Tự động cấp chứng chỉ SSL/TLS miễn phí, hỗ trợ HTTP/3 và QUIC, bảo vệ website khỏi nhiều loại tấn công mạng cơ bản.</li>
-        </ul>
-      </div>
-
-      <h2 class="section-title" id="security"><i class="fas fa-shield-alt"></i> 3. Phân tích Bảo mật (Security Audit)</h2>
-      <div class="grid-2">
-        <div class="card">
-          <h3>Kết quả kiểm tra từ SecurityHeaders.com</h3>
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwGSYErKJFnGhx-c_JvahsWwX0MXPEXzAJjw&s" alt="Security Audit Graph">
-          <p>Việc cấu hình các HTTP Response Headers là tuyến phòng thủ đầu tiên cho trình duyệt, giúp bảo vệ người dùng khỏi nhiều mối đe dọa phổ biến. Dưới đây là thống kê các lỗi thường gặp mà nhóm đã khảo sát trên các trang web mẫu:</p>
-          <div class="chart-wrapper">
-            <canvas id="securityChart"></canvas>
-          </div>
-          <p style="font-size: 0.85rem; color: #666; text-align: center; margin-top: 10px;">*Tỷ lệ các website thiếu cấu hình Header quan trọng</p>
-        </div>
-        
-        <div class="card">
-          <h3>Giải thích các Headers quan trọng</h3>
-          <img src="https://i0.wp.com/secure.wphackedhelp.com/blog/wp-content/uploads/2022/03/Types-Of-Recommended-HTTP-Security-Headers-in-WordPress-1.png?resize=683%2C384&ssl=1" alt="Security Headers explanation">
-          <div class="audit-detail csp">
-            <h4><i class="fas fa-lock"></i> Content-Security-Policy (CSP)</h4>
-            <p style="font-size: 0.9rem;">Header mạnh mẽ nhất trong việc phòng chống XSS (Cross-Site Scripting). CSP quy định trình duyệt chỉ được phép tải các tài nguyên (JavaScript, CSS, hình ảnh, font chữ...) từ các nguồn (domain) đáng tin cậy đã được liệt kê rõ ràng. Điều này ngăn chặn việc thực thi mã độc từ bên ngoài.</p>
-          </div>
-          
-          <div class="audit-detail hsts" style="margin-top: 15px;">
-            <h4><i class="fas fa-key"></i> Strict-Transport-Security (HSTS)</h4>
-            <p style="font-size: 0.9rem;">Bắt buộc trình duyệt phải sử dụng kết nối bảo mật HTTPS cho mọi yêu cầu tới server trong một khoảng thời gian nhất định. HSTS ngăn chặn các cuộc tấn công downgrade protocol và Man-in-the-Middle (MITM) bằng cách đảm bảo dữ liệu luôn được mã hóa khi truyền tải.</p>
-          </div>
-
-          <div class="audit-detail xframe" style="margin-top: 15px;">
-            <h4><i class="fas fa-window-maximize"></i> X-Frame-Options</h4>
-            <p style="font-size: 0.9rem;">Header này ngăn chặn trang web của bạn bị nhúng (embed) vào một thẻ `iframe`, `frame` hoặc `object` trên trang web khác. Đây là cách phòng chống tấn công Clickjacking hiệu quả, nơi kẻ tấn công cố gắng lừa người dùng nhấp vào một yếu tố ẩn trên trang web của họ.</p>
-          </div>
-        </div>
-      </div>
-
-      <h2 class="section-title" id="performance"><i class="fas fa-tachometer-alt"></i> 4. Đánh giá Hiệu năng (Core Web Vitals)</h2>
-      <div class="card">
-        <div class="grid-2">
-          <div>
-            <h3>Google PageSpeed Insights</h3>
-            <img src="Screenshot 2025-12-13 095314.png" alt="PageSpeed Insights">
-            <p>Google sử dụng bộ chỉ số <b>Core Web Vitals</b> để đánh giá trải nghiệm thực tế của người dùng trên website. Các chỉ số này tập trung vào tốc độ tải (loading), khả năng tương tác (interactivity) và độ ổn định hình ảnh (visual stability). Điểm số cao không chỉ tốt cho SEO mà còn giữ chân người dùng.</p>
-            
-            <div class="web-vitals-grid">
-              <div class="vital-card">
-                <b>LCP</b>
-                <small>Largest Contentful Paint</small>
-                <span style="display:block; font-size:0.8rem; margin-top:5px">Đo tốc độ tải phần tử nội dung lớn nhất trên trang. <b>Tốt: &lt; 2.5 giây</b>.</span>
-              </div>
-              <div class="vital-card">
-                <b>INP</b>
-                <small>Interaction to Next Paint</small>
-                <span style="display:block; font-size:0.8rem; margin-top:5px">Đo độ trễ tổng thể của mọi tương tác người dùng (nhấp chuột, chạm, gõ phím) trên trang. <b>Tốt: &lt; 200 mili giây</b>.</span>
-              </div>
-              <div class="vital-card">
-                <b>CLS</b>
-                <small>Cumulative Layout Shift</small>
-                <span style="display:block; font-size:0.8rem; margin-top:5px">Đo độ ổn định giao diện hình ảnh của trang. <b>Tốt: &lt; 0.1</b>.</span>
-              </div>
-            </div>
-
-            <p style="margin-top: 20px;"><b>Kết luận:</b> Khi triển khai trên Cloudflare Pages, nhờ mạng lưới CDN toàn cầu rộng khắp và các tính năng tối ưu hóa tích hợp sẵn (như nén Brotli tự động, tối ưu hình ảnh), các chỉ số Core Web Vitals thường đạt mức tối ưu (xanh lá) mà không cần cấu hình server phức tạp hay tối ưu thủ công quá nhiều.</p>
-          </div>
-          
-          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <canvas id="pageSpeedChart" style="max-height: 250px;"></canvas>
-            <p style="text-align: center; margin-top: 15px; font-weight: 600;">Điểm số trung bình sau khi tối ưu</p>
-          </div>
-        </div>
-      </div>
-
-      <h2 class="section-title" id="team" style="justify-content: center;"><i class="fas fa-users"></i> Thành viên thực hiện</h2>
-      <div class="members-container">
-        <div class="member">
-          <img src="https://ui-avatars.com/api/?name=Trinh+Khac+Nhut&background=4f46e5&color=fff&size=150" alt="Nhựt">
-          <h4>Trịnh Khắc Nhựt</h4>
-          <p style="color: #64748b; font-size: 0.9rem;">MSSV: 22004294</p>
-          <p style="font-size: 0.8rem; margin-top: 10px;">Cloud Architecture & Deployment</p>
-        </div>
-        <div class="member">
-          <img src="https://ui-avatars.com/api/?name=Truong+Minh+Thu&background=ec4899&color=fff&size=150" alt="Thư">
-          <h4>Trương Minh Thư</h4>
-          <p style="color: #64748b; font-size: 0.9rem;">MSSV: 22004297</p>
-          <p style="font-size: 0.8rem; margin-top: 10px;">Content Strategy & Testing</p>
-        </div>
-        <div class="member">
-          <img src="https://ui-avatars.com/api/?name=Nguyen+Ngoc+Huong&background=06b6d4&color=fff&size=150" alt="Hưởng">
-          <h4>Nguyễn Ngọc Hưởng</h4>
-          <p style="color: #64748b; font-size: 0.9rem;">MSSV: 22004020</p>
-          <p style="font-size: 0.8rem; margin-top: 10px;">Security Audit & Frontend</p>
-        </div>
-      </div>
-
-    </div>
-
-    <footer style="background: white; padding: 40px; text-align: center; border-top: 1px solid #eee; margin-top: 60px;">
-      <p>© 2025 Báo cáo Cloud Computing | Cloudflare Pages Analysis</p>
-    </footer>
-
-    <script>
-      // 1. Biểu đồ Security (Bar Chart - Horizontal)
-      const ctxSec = document.getElementById('securityChart').getContext('2d');
-      new Chart(ctxSec, {
-        type: 'bar', // Cột ngang
-        indexAxis: 'y',
-        data: {
-          labels: ['Thiếu Content-Security-Policy', 'Thiếu HSTS', 'Thiếu X-Frame-Options', 'Thiếu Referrer-Policy'],
-          datasets: [{
-            label: 'Số lượng trang web gặp lỗi (%)',
-            data: [75, 45, 30, 60],
-            backgroundColor: [
-              'rgba(239, 68, 68, 0.8)', // Red
-              'rgba(249, 115, 22, 0.8)', // Orange
-              'rgba(234, 179, 8, 0.8)', // Yellow
-              'rgba(59, 130, 246, 0.8)'  // Blue
-            ],
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: { x: { max: 100 } }
-        }
-      });
-
-      // 2. Biểu đồ PageSpeed (Radar Chart)
-      const ctxSpeed = document.getElementById('pageSpeedChart').getContext('2d');
-      new Chart(ctxSpeed, {
-        type: 'radar',
-        data: {
-          labels: ['Performance', 'Accessibility', 'Best Practices', 'SEO'],
-          datasets: [{
-            label: 'Điểm số đạt được',
-            data: [98, 100, 95, 100],
-            fill: true,
-            backgroundColor: 'rgba(16, 185, 129, 0.2)', // Green transparent
-            borderColor: 'rgb(16, 185, 129)',
-            pointBackgroundColor: 'rgb(16, 185, 129)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgb(16, 185, 129)'
-          }]
-        },
-        options: {
-          responsive: true,
-          elements: { line: { borderWidth: 3 } },
-          scales: {
-            r: {
-              angleLines: { display: true },
-              suggestedMin: 50,
-              suggestedMax: 100
-            }
-          }
-        }
-      });
-    </script>
-  </body>
+</div>
+</body>
 </html>
