@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuần 4: Giám sát và Ghi nhật ký trong Điện toán Đám mây</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --light-bg: #f9fafb;
+            --card-bg: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --border: #e5e7eb;
+            --gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            padding-top: 100px;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            /* padding: 0 2rem; */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background-color: rgba(79, 70, 229, 0.1);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: var(--gradient);
+            color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==');
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+            line-height: 1.6;
+            color:#fff;
+        }
+
+        .content-section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--border);
+        }
+
+        .content-section:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--primary-light);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h3 {
+            color: var(--text);
+            margin: 2rem 0 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h3 i {
+            color: var(--accent);
+            font-size: 1.1em;
+        }
+
+        h4 {
+            color: var(--text);
+            margin: 1.5rem 0 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        ul, ol {
+            margin: 1.25rem 0 1.5rem;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            line-height: 1.7;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-light);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .alert {
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            border: 1px solid transparent;
+        }
+
+        .alert i {
+            font-size: 1.25rem;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+
+        .alert-info {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border-color: #93c5fd;
+        }
+
+        .alert-warning {
+            background-color: #fffbeb;
+            color: #92400e;
+            border-color: #fcd34d;
+        }
+
+        .alert-success {
+            background-color: #ecfdf5;
+            color: #065f46;
+            border-color: #6ee7b7;
+        }
+
+        .alert-danger {
+            background-color: #fef2f2;
+            color: #991b1b;
+            border-color: #fca5a5;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .back-btn i {
+            margin-right: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--primary-dark);
+        }
+
+        .back-btn:hover i {
+            transform: translateX(-3px);
+        }
+
+        .img-container {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .img-caption {
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        th, td {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                padding-top: 90px;
+            }
+
+            .page-header {
+                padding: 2rem 1.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: var(--primary);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            right: -17px;
+            background-color: white;
+            border: 4px solid var(--primary);
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .left {
+            left: 0;
+        }
+
+        .right {
+            left: 50%;
+        }
+
+        .left::before {
+            content: " ";
+            height: 0;
+            position: absolute;
+            top: 22px;
+            width: 0;
+            z-index: 1;
+            right: 30px;
+            border: medium solid white;
+            border-width: 10px 0 10px 10px;
+            border-color: transparent transparent transparent white;
+        }
+
+        .right::before {
+            content: " ";
+            height: 0;
+            position: absolute;
+            top: 22px;
+            width: 0;
+            z-index: 1;
+            left: 30px;
+            border: medium solid white;
+            border-width: 10px 10px 10px 0;
+            border-color: transparent white transparent transparent;
+        }
+
+        .right::after {
+            left: -16px;
+        }
+
+        .timeline-content {
+            padding: 20px 30px;
+            background-color: white;
+            position: relative;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+        }
+
+        @media screen and (max-width: 768px) {
+            .timeline::after {
+                left: 31px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+
+            .timeline-item::after {
+                left: 18px;
+            }
+
+            .left::before, .right::before {
+                left: 60px;
+                border: medium solid white;
+                border-width: 10px 10px 10px 0;
+                border-color: transparent white transparent transparent;
+            }
+
+            .right {
+                left: 0%;
+            }
+        }
+    </style>
+</head> 
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-users"></i>
+                <span>Nhóm 7</span>
+            </a>
+            <div class="nav-links">
+                <a href="tuan1.html">Tuần 1</a>
+                <a href="tuan2.html">Tuần 2</a>
+                <a href="tuan3.html">Tuần 3</a>
+                <a href="tuan4.html" class="active">Tuần 4</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+        </a>
+
+        <div class="page-header">
+            <h1>LAB TUẦN 4: GIÁM SÁT, NHẬT KÝ VÀ PHÁT HIỆN BẤT THƯỜNG</h1>
+            <p>Hiểu rõ về vai trò của monitoring và logging trong việc đảm bảo an toàn và hiệu suất hệ thống</p>
+        </div>
+
+        <!-- Yêu cầu 1 -->
+        <section class="content-section">
+            <h2 style="margin-bottom: 2rem;"><i class="fas fa-search"></i> Giám sát và Ghi nhật ký</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                
+                <div class="card" style="margin: 0; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h3><i class="fas fa-tv"></i> Giám sát hệ thống (Monitoring)</h3>
+                        <p>Monitoring là quá trình thu thập và phân tích dữ liệu liên tục để theo dõi hiệu suất và phát hiện vấn đề theo thời gian thực.</p>
+                        
+                        <h4 style="margin-top: 1rem;">Các chỉ số chính (Metrics):</h4>
+                        <ul>
+                            <li>CPU, RAM, Băng thông</li>
+                            <li>Số lượng yêu cầu (Requests)</li>
+                            <li>Tỷ lệ lỗi hệ thống</li>
+                        </ul>
+
+                        <h4 style="margin-top: 1rem;">Đặc điểm:</h4>
+                        <ul>
+                            <li><strong>Phản ứng (Reactive):</strong> Cảnh báo theo ngưỡng.</li>
+                            <li><strong>Thời gian thực:</strong> Biết hệ thống hiện tại ổn không.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="img-container" style="margin-top: 1.5rem;">
+                        <img src="https://www.atatus.com/blog/content/images/2022/11/how-cloud-monitoring-tool-works.png" alt="Monitoring Dashboard">
+                        <p class="img-caption">Monitoring </p>
+                    </div>
+                </div>
+
+                <div class="card" style="margin: 0; display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid var(--secondary);">
+                    <div>
+                        <h3><i class="fas fa-book"></i> Ghi nhật ký (Logging)</h3>
+                        <p>Logging là việc ghi chép mọi sự kiện xảy ra trong hệ thống dưới dạng văn bản (Log files) để truy vết lịch sử.</p>
+                        
+                        <h4 style="margin-top: 1rem;">Các loại nhật ký:</h4>
+                        <ul>
+                            <li><strong>System Logs:</strong> Sự kiện hệ điều hành.</li>
+                            <li><strong>Security Logs:</strong> Truy cập trái phép.</li>
+                            <li><strong>App Logs:</strong> Lỗi từ mã nguồn phần mềm.</li>
+                        </ul>
+                        
+                        <h4 style="margin-top: 1rem;">Vai trò:</h4>
+                        <ul>
+                            <li>Điều tra nguyên nhân gốc rễ (Root Cause).</li>
+                            <li>Phục vụ kiểm toán và pháp lý.</li>
+                        </ul>
+                    </div>
+
+                    <div class="img-container" style="margin-top: 1.5rem;">
+                        <img src="https://media.licdn.com/dms/image/v2/D4E12AQFakZCYvjeltA/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1696826942057?e=2147483647&v=beta&t=jTmv6RV_GACc5X_l9CspoC4JMzJEMQIzaKIxvUOQFo0" alt="Monitoring Dashboard">
+                        <p class="img-caption">Log</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 2.5rem;">
+                <h3><i class="fas fa-shield-alt"></i> Security Visibility</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+                    <div class="card info-card" style="margin: 0;">
+                        <h4><i class="fas fa-mountain"></i> Tầm nhìn Landscape</h4>
+                        <p>Bản đồ cấu trúc hạ tầng và trạng thái tuân thủ.</p>
+                    </div>
+                    <div class="card info-card" style="margin: 0;">
+                        <h4><i class="fas fa-running"></i> Tầm nhìn Activity</h4>
+                        <p>Các sự kiện đang diễn ra và cảnh báo bảo mật.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-success" style="margin-top: 2rem; display: flex; align-items: center; gap: 1rem;">
+                <i class="fas fa-fire-extinguisher" style="font-size: 2rem;"></i>
+                <div>
+                    <strong>Tóm lại:</strong> Nếu Monitoring là hệ thống cảnh báo cháy giúp bạn biết nhà đang nóng lên, thì Logging chính là camera an ninh giúp bạn biết ngọn lửa bắt đầu từ đâu và do ai gây ra.
+                </div>
+            </div>
+        </section>
+        <!-- Yêu cầu 2 -->
+        <section class="content-section">
+            <h2><i class="fas fa-search-plus"></i> Đối tượng giám sát trong hệ thống web trên cloud</h2>
+            
+            <p>Khi vận hành một website hoặc ứng dụng web trên môi trường cloud, hệ thống thường có nhiều thành phần phân tán và thay đổi linh hoạt. Do đó, việc xác định đúng đối tượng cần giám sát (monitoring & logging) là yếu tố then chốt để đảm bảo hiệu năng, bảo mật và độ tin cậy của hệ thống.</p>
+            
+            <h3><i class="fas fa-users"></i> 1. Người dùng truy cập hệ thống</h3>
+            <p><strong>Vì sao cần giám sát:</strong></p>
+            <ul>
+                <li>Theo dõi số lượng người dùng đang truy cập, nguồn truy cập (IP, quốc gia, thiết bị).</li>
+                <li>Phát hiện các hành vi bất thường như truy cập ồ ạt từ một IP hoặc một khu vực.</li>
+                <li>Đánh giá mức độ sử dụng hệ thống để tối ưu tài nguyên cloud (auto-scaling).</li>
+            </ul>
+            
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <strong>Rủi ro nếu không giám sát:</strong>
+                    <ul>
+                        <li>Không phát hiện kịp thời các cuộc tấn công DDoS hoặc bot truy cập hàng loạt.</li>
+                        <li>Không kiểm soát được lưu lượng truy cập bất thường gây quá tải hệ thống.</li>
+                        <li>Khó đánh giá hiệu quả vận hành và trải nghiệm người dùng.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-sign-in-alt"></i>2. Phiên đăng nhập (Session)</h3>
+            <p><strong>Vì sao cần giám sát:</strong></p>
+            <ul>
+                <li>Theo dõi số lượng session đang hoạt động.</li>
+                <li>Phát hiện session tồn tại bất thường (quá lâu, không hết hạn).</li>
+                <li>Kiểm soát việc chiếm quyền session (session hijacking).</li>
+            </ul>
+            
+            <div class="alert alert-danger">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <strong>Rủi ro nếu không giám sát:</strong>
+                    <ul>
+                        <li>Người dùng có thể bị đánh cắp session và truy cập trái phép.</li>
+                        <li>Session không bị hủy gây rò rỉ quyền truy cập.</li>
+                        <li>Tăng nguy cơ tấn công giả mạo người dùng (impersonation).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-user-lock"></i>3. Hoạt động đăng nhập / đăng xuất</h3>
+            <p><strong>Vì sao cần giám sát:</strong></p>
+            <ul>
+                <li>Theo dõi số lần đăng nhập thành công và thất bại.</li>
+                <li>Phát hiện hành vi brute-force (thử mật khẩu liên tục).</li>
+                <li>Đánh giá mức độ an toàn của cơ chế xác thực.</li>
+            </ul>
+            
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <strong>Rủi ro nếu không giám sát:</strong>
+                    <ul>
+                        <li>Không phát hiện kịp các cuộc tấn công dò mật khẩu.</li>
+                        <li>Tài khoản người dùng dễ bị xâm nhập.</li>
+                        <li>Không có dữ liệu phục vụ điều tra khi xảy ra sự cố bảo mật.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-exclamation-circle"></i>4. Các yêu cầu truy cập bất thường</h3>
+            <p><strong>Vì sao cần giám sát:</strong></p>
+            <ul>
+                <li>Phát hiện các request bất thường như:
+                    <ul>
+                        <li>Số lượng request tăng đột biến</li>
+                        <li>Request chứa payload nghi vấn (SQL Injection, XSS)</li>
+                    </ul>
+                </li>
+                <li>Phát hiện quét lỗ hổng hoặc tấn công vào API.</li>
+            </ul>
+            
+            <div class="alert alert-danger">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <strong>Rủi ro nếu không giám sát:</strong>
+                    <ul>
+                        <li>Website có thể bị khai thác lỗ hổng mà không hay biết.</li>
+                        <li>Rò rỉ dữ liệu nhạy cảm.</li>
+                        <li>Dịch vụ bị gián đoạn hoặc bị chiếm quyền điều khiển.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-bug"></i>5. Các lỗi phát sinh trong hệ thống</h3>
+            <p><strong>Vì sao cần giám sát:</strong></p>
+            <ul>
+                <li>Theo dõi lỗi ứng dụng (HTTP 500, exception, timeout).</li>
+                <li>Phát hiện lỗi tăng đột biến sau khi deploy hoặc cập nhật hệ thống.</li>
+                <li>Đảm bảo hệ thống đáp ứng SLA (Service Level Agreement).</li>
+            </ul>
+            
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <strong>Rủi ro nếu không giám sát:</strong>
+                    <ul>
+                        <li>Lỗi kéo dài mà không được phát hiện kịp thời.</li>
+                        <li>Trải nghiệm người dùng kém, gây mất uy tín.</li>
+                        <li>Khó xác định nguyên nhân gốc rễ khi hệ thống gặp sự cố.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-compare"></i> Phân biệt Monitoring và Logging trong các tình huống cụ thể</h3>
+            <p>Monitoring và Logging có vai trò bổ trợ cho nhau, nhưng mỗi công cụ phù hợp với từng loại tình huống khác nhau.</p>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-sign-in-alt"></i> Phát hiện số lần đăng nhập thất bại tăng đột biến</h3>
+                    <p><strong>Phù hợp hơn: Monitoring</strong></p>
+                    <p><strong>Giải thích:</strong></p>
+                    <p>Đây là hiện tượng cần phát hiện theo thời gian thực. Monitoring có thể:</p>
+                    <ul>
+                        <li>Đếm số lần đăng nhập thất bại trong một khoảng thời gian.</li>
+                        <li>Cảnh báo khi vượt ngưỡng (ví dụ: >100 lần/phút).</li>
+                        <li>Giúp phản ứng nhanh với các cuộc tấn công brute-force.</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-search"></i> Điều tra ai đã truy cập hệ thống vào thời điểm xảy ra sự cố</h3>
+                    <p><strong>Phù hợp hơn: Logging</strong></p>
+                    <p><strong>Giải thích:</strong></p>
+                    <p>Cần xem lại lịch sử sự kiện đã xảy ra. Logging cung cấp thông tin chi tiết:</p>
+                    <ul>
+                        <li>User nào truy cập</li>
+                        <li>Thời điểm truy cập</li>
+                        <li>IP, user-agent, hành động thực hiện</li>
+                    </ul>
+                    <p>Dùng cho điều tra, kiểm toán và truy vết sau sự cố.</p>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-bug"></i> Xác định nguyên nhân gây lỗi hệ thống</h3>
+                    <p><strong>Phù hợp hơn: Logging (kết hợp Monitoring)</strong></p>
+                    <p><strong>Giải thích:</strong></p>
+                    <p>Monitoring giúp phát hiện khi nào lỗi xảy ra (CPU tăng cao, dịch vụ down).</p>
+                    <p>Logging giúp phân tích vì sao lỗi xảy ra:</p>
+                    <ul>
+                        <li>Stack trace</li>
+                        <li>Exception message</li>
+                        <li>Request gây lỗi</li>
+                    </ul>
+                    <p>Logging cung cấp ngữ cảnh chi tiết để tìm nguyên nhân gốc rễ.</p>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-check-circle"></i> Kết luận</h3>
+            <p>Trong môi trường cloud, việc giám sát và ghi nhật ký các đối tượng như người dùng, session, đăng nhập, request và lỗi hệ thống là bắt buộc để đảm bảo an toàn và ổn định.</p>
+            
+            <div class="alert alert-info">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                    <strong>Lưu ý quan trọng:</strong>
+                    <ul>
+                        <li>Monitoring phù hợp cho phát hiện sớm, cảnh báo thời gian thực.</li>
+                        <li>Logging phù hợp cho điều tra, phân tích và truy vết sau sự cố.</li>
+                        <li>Hai cơ chế này không thay thế nhau mà phải được triển khai song song để đạt được khả năng quan sát (visibility) toàn diện cho hệ thống web trên cloud.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Yêu cầu 3 -->
+        <section class="content-section">
+            <h2><i class="fas fa-search"></i> Phân tích tình huống giả định</h2>
+            
+            <h3><i class="fas fa-clipboard-list"></i> 1. Mô tả tình huống giả định</h3>
+            <p>Trong quá trình vận hành một website/ứng dụng web trên nền tảng cloud, hệ thống ghi nhận trong vòng 10 phút các hiện tượng sau:</p>
+            <ul>
+                <li>Số lượng request gửi đến hệ thống tăng cao bất thường</li>
+                <li>Xuất hiện nhiều lần đăng nhập thất bại liên tiếp</li>
+                <li>Có các truy cập đến từ địa chỉ IP hoặc vị trí địa lý không quen thuộc</li>
+            </ul>
+            <p>Đây là những biểu hiện tiềm ẩn nguy cơ tấn công bảo mật hoặc lạm dụng tài nguyên hệ thống, cần được phân tích dựa trên monitoring và logging.</p>
+
+            <h3><i class="fas fa-exclamation-triangle"></i> 2. Các dấu hiệu thể hiện hành vi bất thường</h3>
+            <p>Từ tình huống trên, có thể xác định các dấu hiệu bất thường sau:</p>
+            
+            <h4>2.1. Lưu lượng request tăng đột biến trong thời gian ngắn</h4>
+            <ul>
+                <li>Số request/phút cao hơn nhiều so với mức trung bình.</li>
+                <li>Tăng đột ngột mà không gắn với sự kiện hợp lý (quảng cáo, giờ cao điểm).</li>
+            </ul>
+            <p><strong>Dấu hiệu của:</strong></p>
+            <ul>
+                <li>Tấn công DDoS</li>
+                <li>Bot crawling, brute-force API</li>
+                <li>Abuse tài nguyên hệ thống</li>
+            </ul>
+
+            <h4>2.2. Nhiều lần đăng nhập thất bại liên tiếp</h4>
+            <ul>
+                <li>Một hoặc nhiều tài khoản bị thử đăng nhập liên tục.</li>
+                <li>Tỷ lệ đăng nhập thất bại cao hơn bình thường.</li>
+            </ul>
+            <p><strong>Dấu hiệu của:</strong></p>
+            <ul>
+                <li>Tấn công brute-force</li>
+                <li>Credential stuffing (dùng tài khoản/mật khẩu rò rỉ)</li>
+            </ul>
+
+            <h4>2.3. Truy cập từ IP hoặc vị trí địa lý không quen thuộc</h4>
+            <ul>
+                <li>IP chưa từng xuất hiện trong lịch sử truy cập.</li>
+                <li>Truy cập từ quốc gia/khu vực khác thường.</li>
+            </ul>
+            <p><strong>Dấu hiệu của:</strong></p>
+            <ul>
+                <li>Truy cập trái phép</li>
+                <li>Tài khoản bị chiếm quyền</li>
+                <li>Sử dụng VPN, proxy, botnet</li>
+            </ul>
+
+            <h3><i class="fas fa-tv"></i> 3. Dấu hiệu chỉ có thể phát hiện nhờ Monitoring</h3>
+            <p>Monitoring tập trung vào số liệu tổng hợp, thời gian thực và ngưỡng cảnh báo.</p>
+            
+            <h4>3.1. Gia tăng đột biến số lượng request</h4>
+            <p>Monitoring theo dõi:</p>
+            <ul>
+                <li>Requests per second (RPS)</li>
+                <li>Bandwidth</li>
+                <li>CPU / RAM</li>
+            </ul>
+            <p>Cảnh báo ngay khi vượt ngưỡng cấu hình.</p>
+            <p><strong>Chỉ monitoring mới phát hiện nhanh vì:</strong></p>
+            <ul>
+                <li>Log không tự cảnh báo theo thời gian thực.</li>
+                <li>Monitoring giúp phản ứng kịp thời (scale, block, rate limit).</li>
+            </ul>
+
+            <h4>3.2. Tăng mạnh số lần đăng nhập thất bại trong thời gian ngắn</h4>
+            <p>Monitoring đếm số event "login failed" trong 10 phút.</p>
+            <p>Phát hiện xu hướng tăng bất thường.</p>
+            <p><strong>Monitoring phù hợp vì:</strong></p>
+            <ul>
+                <li>Phát hiện hành vi lặp lại nhanh.</li>
+                <li>Có thể tự động kích hoạt cảnh báo hoặc khóa tạm thời.</li>
+            </ul>
+
+            <h4>3.3. Bất thường về hiệu năng hệ thống</h4>
+            <ul>
+                <li>CPU, RAM, network tăng cao bất thường.</li>
+                <li>Độ trễ (latency) tăng đột ngột.</li>
+            </ul>
+            <p>Đây là dữ liệu chỉ monitoring mới cung cấp.</p>
+
+            <h3><i class="fas fa-book"></i> 4. Dấu hiệu chỉ có thể phát hiện nhờ Logging</h3>
+            <p>Logging cung cấp chi tiết từng sự kiện riêng lẻ, phục vụ điều tra.</p>
+            
+            <h4>4.1. Ai đã đăng nhập và vào thời điểm nào</h4>
+            <p>Log xác định:</p>
+            <ul>
+                <li>Username</li>
+                <li>IP</li>
+                <li>Thời gian</li>
+                <li>User-agent</li>
+            </ul>
+            <p>Monitoring không trả lời được câu hỏi "ai".</p>
+
+            <h4>4.2. IP hoặc vị trí địa lý cụ thể nào là bất thường</h4>
+            <p>Log cho biết:</p>
+            <ul>
+                <li>IP cụ thể</li>
+                <li>Quốc gia</li>
+                <li>Request cụ thể đã gửi</li>
+            </ul>
+            <p>Chỉ logging mới cho phép truy vết chính xác.</p>
+
+            <h4>4.3. Request nào gây lỗi hoặc hành vi đáng ngờ</h4>
+            <p>Log ghi lại:</p>
+            <ul>
+                <li>URL</li>
+                <li>Payload</li>
+                <li>Header</li>
+                <li>Stack trace lỗi</li>
+            </ul>
+            <p>Phục vụ phân tích nguyên nhân gốc rễ.</p>
+
+            <h4>4.4. Trình tự sự kiện (timeline)</h4>
+            <p>Log cho phép dựng lại toàn bộ chuỗi sự kiện:</p>
+            <pre>Truy cập → đăng nhập → lỗi → logout</pre>
+            <p>Monitoring không lưu chi tiết lịch sử này.</p>
+
+            <h3><i class="fas fa-question-circle"></i> 5. Nếu hệ thống chỉ có Monitoring mà không có Logging sẽ thiếu gì?</h3>
+            <p>Nếu hệ thống chỉ triển khai monitoring mà không có logging, sẽ tồn tại nhiều hạn chế nghiêm trọng:</p>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-user-secret"></i> 5.1. Không biết "ai" đã gây ra sự cố</h3>
+                    <p>Monitoring chỉ báo có sự cố. Không biết:</p>
+                    <ul>
+                        <li>User nào</li>
+                        <li>IP nào</li>
+                        <li>Request nào</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-search"></i> 5.2. Không thể điều tra nguyên nhân gốc rễ</h3>
+                    <p>Không có stack trace, payload, dữ liệu chi tiết. Khó sửa lỗi triệt để.</p>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-balance-scale"></i> 5.3. Không đủ bằng chứng cho kiểm toán và pháp lý</h3>
+                    <p>Không có log để:</p>
+                    <ul>
+                        <li>Audit bảo mật</li>
+                        <li>Chứng minh tuân thủ</li>
+                        <li>Điều tra sau sự cố</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-fire-extinguisher"></i> 5.4. Phản ứng mang tính "chữa cháy"</h3>
+                    <p>Biết hệ thống bất thường nhưng không hiểu rõ lý do. Dễ xử lý sai hoặc bỏ sót mối đe dọa thực sự.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Yêu cầu 4 -->
+        <section class="content-section">
+            <h2><i class="fas fa-shield-alt"></i> Vai trò của log trong điều tra sự cố an toàn</h2>
+            
+            <h3><i class="fas fa-question-circle"></i> 1. Log giúp trả lời những câu hỏi nào khi xảy ra sự cố an toàn?</h3>
+            <p>Khi xảy ra sự cố an toàn thông tin, log là nguồn dữ liệu quan trọng nhất để tái hiện lại toàn bộ diễn biến sự cố. Cụ thể, log giúp trả lời các câu hỏi cốt lõi sau:</p>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-user"></i> Ai thực hiện hành động?</h3>
+                    <p>Tài khoản, user ID, role, API key</p>
+                </div>
+                <div class="card">
+                    <h3><i class="far fa-clock"></i> Khi nào sự cố xảy ra?</h3>
+                    <p>Timestamp chính xác theo UTC</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-map-marker-alt"></i> Từ đâu truy cập vào hệ thống?</h3>
+                    <p>IP, vị trí địa lý, thiết bị, user-agent</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-tasks"></i> Làm gì trong hệ thống?</h3>
+                    <p>Đăng nhập, thay đổi dữ liệu, truy cập tài nguyên</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-question"></i> Như thế nào sự cố xảy ra?</h3>
+                    <p>Chuỗi request, lỗi, payload, stack trace</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-bullseye"></i> Phạm vi ảnh hưởng đến đâu?</h3>
+                    <p>Tài nguyên bị truy cập, dữ liệu bị tác động</p>
+                </div>
+            </div>
+
+            <div class="alert alert-success">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                    <strong>Log giúp trả lời đầy đủ câu hỏi 5W1H</strong> (Who – When – Where – What – How – How much).
+                </div>
+            </div>
+
+            <h3><i class="fas fa-exclamation-triangle"></i> 2. Nếu không có log: Khó khăn trong xác định nguyên nhân và trách nhiệm</h3>
+            
+            <h4>2.1. Khó khăn trong xác định nguyên nhân sự cố</h4>
+            <p>Nếu không có log:</p>
+            <ul>
+                <li>Không thể biết sự cố bắt đầu từ đâu.</li>
+                <li>Không xác định được hành vi nào gây ra lỗi hay vi phạm bảo mật.</li>
+                <li>Không có dữ liệu để phân tích nguyên nhân gốc rễ (root cause).</li>
+            </ul>
+            <p>Việc xử lý chỉ mang tính phỏng đoán, dễ sửa sai hoặc bỏ sót lỗ hổng.</p>
+
+            <h4>2.2. Không thể xác định trách nhiệm</h4>
+            <p>Không có log đồng nghĩa với:</p>
+            <ul>
+                <li>Không xác định được tài khoản hoặc cá nhân liên quan.</li>
+                <li>Không có bằng chứng phục vụ kiểm toán, kỷ luật hoặc pháp lý.</li>
+                <li>Không thể chứng minh hệ thống tuân thủ quy định an toàn thông tin.</li>
+            </ul>
+            <p>Trong nhiều trường hợp, không có log = không có bằng chứng.</p>
+
+            <h3><i class="fas fa-shield-virus"></i> 3. Rủi ro của log nếu ghi quá chi tiết hoặc không được bảo vệ đúng cách</h3>
+            
+            <h4>3.1. Rủi ro khi log ghi quá chi tiết</h4>
+            <p>Nếu log ghi nhận quá nhiều thông tin nhạy cảm:</p>
+            <ul>
+                <li>Lộ mật khẩu, token, API key.</li>
+                <li>Ghi thông tin cá nhân (PII): email, số điện thoại, địa chỉ.</li>
+                <li>Vi phạm quy định bảo vệ dữ liệu (GDPR, PDPA).</li>
+            </ul>
+            <p>Log trở thành nguồn rò rỉ dữ liệu nếu bị lộ.</p>
+
+            <h4>3.2. Rủi ro khi log không được bảo vệ đúng cách</h4>
+            <p>Log bị truy cập trái phép → lộ cấu trúc hệ thống.</p>
+            <p>Log bị chỉnh sửa hoặc xóa → mất tính toàn vẹn.</p>
+            <p>Log không mã hóa → dễ bị đọc trộm.</p>
+            
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <strong>Log cần được:</strong>
+                    <ul>
+                        <li>Phân quyền truy cập chặt chẽ</li>
+                        <li>Mã hóa khi lưu trữ và truyền tải</li>
+                        <li>Lưu trữ tập trung, chống chỉnh sửa (append-only)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-cloud"></i> 4. Cloud hỗ trợ monitoring và logging ở những lớp nào?</h3>
+            <p>Trong môi trường điện toán đám mây, monitoring và logging được hỗ trợ ở nhiều lớp:</p>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-server"></i> Lớp hạ tầng (Infrastructure layer)</h3>
+                    <ul>
+                        <li>CPU, RAM, disk, VM status</li>
+                        <li>Auto-scaling, health check</li>
+                    </ul>
+                    <p><em>Ví dụ: AWS EC2 metrics, Azure VM Insights</em></p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-network-wired"></i> Lớp mạng (Network layer)</h3>
+                    <ul>
+                        <li>Lưu lượng mạng</li>
+                        <li>Firewall, load balancer</li>
+                        <li>DDoS protection</li>
+                    </ul>
+                    <p><em>Ví dụ: VPC Flow Logs, Load Balancer logs</em></p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-code"></i> Lớp ứng dụng (Application layer)</h3>
+                    <ul>
+                        <li>Application logs</li>
+                        <li>API access logs</li>
+                        <li>Error logs</li>
+                    </ul>
+                    <p><em>Ví dụ: CloudWatch Logs, Azure Monitor Logs</em></p>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-ban"></i> 5. Cloud không thể giám sát những gì trong ứng dụng?</h3>
+            <p>Cloud không thể tự động giám sát các nội dung sau nếu lập trình viên không cấu hình:</p>
+            <ul>
+                <li>Logic nghiệp vụ bên trong ứng dụng</li>
+                <li>Hành vi bất thường ở mức business (gian lận, thao túng dữ liệu)</li>
+                <li>Ý nghĩa của request (hợp lệ hay gian lận)</li>
+                <li>Lỗi logic không gây crash (silent error)</li>
+            </ul>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Lưu ý:</strong> Developer phải chủ động ghi log ở các điểm quan trọng.
+                </div>
+            </div>
+
+            <h3><i class="fas fa-search"></i> 6. Monitoring giúp phát hiện sự cố ở giai đoạn nào?</h3>
+            <p>Monitoring chủ yếu phát hiện sự cố ở giai đoạn sớm:</p>
+            <ul>
+                <li>Khi lưu lượng tăng bất thường</li>
+                <li>Khi dịch vụ bị chậm hoặc không phản hồi</li>
+                <li>Khi tài nguyên vượt ngưỡng</li>
+            </ul>
+            <p>Monitoring giúp phát hiện triệu chứng của sự cố.</p>
+
+            <h3><i class="fas fa-first-aid"></i> 7. Logging hỗ trợ Incident Response như thế nào?</h3>
+            <p>Trong quy trình Incident Response, logging hỗ trợ ở các bước:</p>
+            
+            <div class="timeline">
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h4>1. Detection – Phát hiện dấu hiệu đáng ngờ</h4>
+                        <p>Log cung cấp dữ liệu để phát hiện sự bất thường</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h4>2. Analysis – Phân tích nguyên nhân gốc rễ</h4>
+                        <p>Chi tiết log giúp xác định nguồn gốc sự cố</p>
+                    </div>
+                </div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h4>3. Containment – Khoanh vùng ảnh hưởng</h4>
+                        <p>Log xác định phạm vi hệ thống bị ảnh hưởng</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h4>4. Eradication – Loại bỏ nguyên nhân</h4>
+                        <p>Log giúp xác định cách thức tấn công để khắc phục</p>
+                    </div>
+                </div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h4>5. Recovery – Khôi phục hệ thống</h4>
+                        <p>Log xác nhận hệ thống đã trở lại bình thường</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h4>6. Lessons learned – Rút kinh nghiệm</h4>
+                        <p>Log là cơ sở để phân tích và cải thiện</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-success">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                    <strong>Log là nền tảng cho forensics và điều tra số.</strong>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-balance-scale-right"></i> 8. So sánh hậu quả giữa phát hiện sự cố sớm và muộn</h3>
+            
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Phát hiện sớm</th>
+                            <th>Phát hiện muộn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Thiệt hại</strong></td>
+                            <td>Giảm thiểu thiệt hại</td>
+                            <td>Dữ liệu bị đánh cắp trong thời gian dài</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Chi phí</strong></td>
+                            <td>Chi phí khắc phục thấp</td>
+                            <td>Thiệt hại tài chính lớn</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Uy tín</strong></td>
+                            <td>Hạn chế ảnh hưởng</td>
+                            <td>Mất uy tín doanh nghiệp</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Điều tra</strong></td>
+                            <td>Dễ dàng xác định nguyên nhân</td>
+                            <td>Khó điều tra do log bị ghi đè hoặc mất</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add active class to current navigation item
+        const currentLocation = location.href;
+        const menuItems = document.querySelectorAll('.nav-links a');
+        menuItems.forEach(item => {
+            if (item.href === currentLocation) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+
+        // Add animation to elements on scroll
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.card, .content-section, .img-container');
+            const windowHeight = window.innerHeight;
+            
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementPosition < windowHeight - elementVisible) {
+                    element.classList.add('animate');
+                }
+            });
+        };
+
+        // Run once on page load
+        window.addEventListener('load', animateOnScroll);
+        
+        // Run on scroll
+        window.addEventListener('scroll', animateOnScroll);
+    </script>
+</body>
+</html>

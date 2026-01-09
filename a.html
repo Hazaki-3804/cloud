@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuần 3: Bảo mật Web - HTTPS, HTTP Headers & OWASP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --light-bg: #f9fafb;
+            --card-bg: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --border: #e5e7eb;
+            --gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            padding-top: 100px;
+        }
+
+        /* Navbar Gốc của bạn */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary);
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--gradient);
+            color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .page-header h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+
+        /* Tối ưu UI cho List (ul, ol) */
+        ul, ol { margin: 1.5rem 0; list-style: none; }
+        li { margin-bottom: 0.75rem; position: relative; line-height: 1.7; }
+
+        /* Kiểu dáng mới cho danh sách không thứ tự */
+        ul li { padding-left: 1.75rem; }
+        ul li:before {
+            content: "\f058"; /* Check circle icon */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: var(--secondary);
+            position: absolute;
+            left: 0;
+            font-size: 1rem;
+        }
+
+        /* Kiểu dáng mới cho danh sách có thứ tự (Step-by-step) */
+        ol { counter-reset: item; }
+        ol li { counter-increment: item; padding-left: 2.5rem; min-height: 30px; display: flex; align-items: center; }
+        ol li:before {
+            content: counter(item);
+            background: var(--primary);
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Section Layouts */
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        h2 { color: var(--primary); margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--primary-light); }
+        h3 { color: var(--primary-dark); margin: 2rem 0 1rem; }
+
+        /* Tối ưu bố cục Hình ảnh/Text (Sửa lỗi OWASP layout) */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr; /* Ưu tiên text rộng hơn hình */
+            gap: 2.5rem;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .img-container {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .img-container img { max-width: 100%; height: auto; border-radius: 8px; }
+        .img-caption { font-size: 0.85rem; color: var(--text-light); font-style: italic; margin-top: 10px; }
+
+        /* Table */
+        .table-container { overflow-x: auto; border-radius: 8px; box-shadow: var(--shadow); margin: 1.5rem 0; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th { background-color: var(--primary); color: white; padding: 1rem; text-align: left; }
+        td { padding: 1rem; border: 1px solid var(--border); }
+        tr:nth-child(even) { background-color: var(--light-bg); }
+
+        /* Cards */
+        .card { background: var(--card-bg); border-radius: 8px; padding: 1.5rem; border: 1px solid var(--border); margin: 1rem 0; }
+        .risk-card { border-left: 5px solid var(--accent); background: #fffcf5; }
+        .solution-card { border-left: 5px solid var(--secondary); background: #f6fff9; }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .grid-layout { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-users"></i>
+                <span>Nhóm 7</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html">Giới thiệu nhóm</a>
+                <a href="tuan1.html">Tuần 1</a>
+                <a href="tuan2.html">Tuần 2</a>
+                <a href="tuan3.html" class="active">Tuần 3</a>
+                <a href="tuan4.html">Tuần 4</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Tuần 3: Bảo mật Web - HTTPS, HTTP Headers & OWASP</h1>
+            <p>Khám phá các khái niệm cơ bản về bảo mật web và các lỗ hổng phổ biến</p>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-lock"></i> 1. HTTP, HTTPS và TLS</h2>
+            <div class="grid-layout">
+                <div>
+                    <h3>1.1 HTTP là gì?</h3>
+                    <p>HTTP (HyperText Transfer Protocol) là giao thức dùng để truyền dữ liệu giữa Trình duyệt và Máy chủ web.</p>
+                    <div class="card risk-card">
+                        <h4>Nhược điểm:</h4>
+                        <ul>
+                            <li>Dữ liệu truyền ở dạng plaintext</li>
+                            <li>Dễ bị nghe lén, sửa đổi, giả mạo (Man-in-the-Middle)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="img-container">
+                    <img src="https://www.cloudflare.com/img/learning/security/glossary/http-request/http-request.svg" alt="HTTP">
+                    <p class="img-caption">Minh họa kết nối HTTP không an toàn</p>
+                </div>
+            </div>
+
+            <div class="grid-layout" style="grid-template-columns: 0.8fr 1.2fr;">
+                <div class="img-container">
+                    <img src="https://www.cloudflare.com/img/learning/security/cryptography/what-is-tls/tls-encryption.svg" alt="TLS">
+                    <p class="img-caption">Quy trình bắt tay TLS</p>
+                </div>
+                <div>
+                    <h3>1.2 HTTPS và TLS</h3>
+                    <p>HTTPS (HTTP Secure) sử dụng TLS để đảm bảo:</p>
+                    <ol>
+                        <li><strong>Bí mật (Confidentiality):</strong> Dữ liệu được mã hóa.</li>
+                        <li><strong>Toàn vẹn (Integrity):</strong> Dữ liệu không bị thay đổi.</li>
+                        <li><strong>Xác thực (Authentication):</strong> Xác minh danh tính máy chủ.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-shield-virus"></i> 2. HTTP Security Headers</h2>
+            <p>HTTP Security Headers giúp kiểm soát cách trình duyệt xử lý nội dung để ngăn chặn tấn công XSS, Clickjacking,...</p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>Header</th><th>Chức năng</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Strict-Transport-Security</strong></td><td>Bắt buộc dùng HTTPS</td></tr>
+                        <tr><td><strong>Content-Security-Policy</strong></td><td>Ngăn chặn tấn công XSS</td></tr>
+                        <tr><td><strong>X-Frame-Options</strong></td><td>Chống Clickjacking</td></tr>
+                        <tr><td><strong>X-Content-Type-Options</strong></td><td>Ngăn MIME sniffing</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-bug"></i> 3. OWASP Top 10 (2021-2025)</h2>
+            <div class="grid-layout">
+                <div>
+                    <p>OWASP là tổ chức mở chuyên về cải thiện bảo mật phần mềm. <strong>OWASP Top 10</strong> liệt kê các lỗ hổng nguy hiểm nhất hiện nay.</p>
+                    <ul>
+                        <li>Nâng cao nhận thức an toàn web</li>
+                        <li>Làm tài liệu chuẩn cho kiểm thử bảo mật</li>
+                    </ul>
+                </div>
+                <div class="img-container">
+                    <img src="https://owasp.org/assets/images/logo.png" style="max-width: 150px;" alt="OWASP Logo">
+                    <p class="img-caption">OWASP - Tổ chức bảo mật hàng đầu</p>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>Nhóm rủi ro</th><th>Mô tả ngắn</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Broken Access Control</td><td>Người dùng vượt quyền truy cập.</td></tr>
+                        <tr><td>Security Misconfiguration</td><td>Lỗi cấu hình server/app.</td></tr>
+                        <tr><td>Injection</td><td>Nhập dữ liệu độc hại vào hệ thống.</td></tr>
+                        <tr><td>Cryptographic Failures</td><td>Sai lệch mã hóa dữ liệu.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-flask"></i> 4. OWASP Juice Shop</h2>
+            <div class="grid-layout">
+                <div>
+                    <p>Juice Shop là một ứng dụng web không an toàn dùng để thực hành bảo mật:</p>
+                    <ol>
+                        <li>Giúp sinh viên hiểu rõ bản chất lỗ hổng.</li>
+                        <li>Thực hành pentest trong môi trường an toàn.</li>
+                        <li>Liên hệ lý thuyết với thực tế.</li>
+                    </ol>
+                </div>
+                <div class="img-container">
+                    <img src="https://raw.githubusercontent.com/juice-shop/juice-shop/gh-pages/images/screenshots/shop.png" alt="Juice Shop">
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-cloud"></i> 5. Phân tích rủi ro & Cloud</h2>
+            <div class="card risk-card">
+                <h4>Tại sao Broken Access Control nguy hiểm hơn trên Cloud?</h4>
+                <p>Trên Cloud, tài nguyên công khai Internet và bề mặt tấn công rộng lớn hơn. Nếu lỗi phân quyền xảy ra, kẻ tấn công có thể khai thác từ bất cứ đâu mà không cần vào mạng nội bộ.</p>
+            </div>
+            <h3>Biện pháp bảo vệ:</h3>
+            <ul>
+                <li>Quản lý danh tính & quyền truy cập (IAM).</li>
+                <li>Áp dụng mô hình Zero Trust.</li>
+                <li>Sử dụng Web Application Firewall (WAF).</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin: 3rem 0;">
+            <a href="tuan4.html" class="btn">Tiếp tục đến Tuần 4 <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer style="text-align: center; padding: 3rem; background: var(--primary-dark); color: white;">
+        <p>© 2025 Báo cáo Điện toán đám mây | Nhóm 7</p>
+    </footer>
+</body>
+</html>

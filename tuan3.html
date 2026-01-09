@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuần 3: Bảo mật Web - HTTPS, HTTP Headers & OWASP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --light-bg: #f9fafb;
+            --card-bg: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --border: #e5e7eb;
+            --gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            padding-top: 100px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--gradient);
+            color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .page-header p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .content-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-section img {
+            max-width: 100%;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .content-section img:hover {
+            transform: scale(1.02);
+        }
+
+        .content-row {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .content-row.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .content-text {
+            flex: 1;
+        }
+
+        .content-image {
+            flex: 1;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .content-row {
+                flex-direction: column;
+            }
+            
+            .content-row.reverse {
+                flex-direction: column;
+            }
+            
+            .content-text, 
+            .content-image {
+                width: 100%;
+            }
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--primary-light);
+        }
+
+        h3 {
+            color: var(--primary-dark);
+            margin: 2rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h3 i {
+            color: var(--primary);
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 1.5rem 0;
+            padding-left: 1.5rem;
+            list-style-type: none;
+        }
+
+        li {
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 1.75rem;
+            line-height: 1.7;
+        }
+
+        ul li:before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        ol {
+            counter-reset: item;
+        }
+
+        ol li {
+            counter-increment: item;
+            padding-left: 2rem;
+        }
+
+        ol li:before {
+            content: counter(item) ".";
+            color: var(--primary);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover::before {
+            width: 6px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .grid .card {
+            margin: 0;
+        }
+
+        .img-container {
+            margin: 1.5rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .img-caption {
+            margin: 0;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-style: italic;
+            background: rgba(255, 255, 255, 0.9);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .img-container:hover .img-caption {
+            transform: translateY(0);
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+            border: 2px solid var(--primary);
+        }
+
+        .btn:hover {
+            background: transparent;
+            color: var(--primary);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 1.75rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* Tables */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--primary-dark);
+            color: white;
+            margin-top: 4rem;
+        }
+
+        footer p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                padding-top: 80px;
+            }
+            
+            .page-header {
+                padding: 1.5rem;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 80px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: var(--shadow);
+                z-index: 999;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                color: var(--text);
+                cursor: pointer;
+            }
+        }
+
+        /* Custom styles for this page */
+        .risk-card {
+            border-left: 4px solid var(--accent);
+        }
+
+        .risk-card h4 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .solution-card {
+            border-left: 4px solid var(--secondary);
+        }
+
+        .solution-card h4 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-users"></i>
+                <span>Nhóm 7</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="tuan1.html">Tuần 1</a>
+                <a href="tuan2.html">Tuần 2</a>
+                <a href="tuan3.html" class="active">Tuần 3</a>
+                <a href="tuan4.html">Tuần 4</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+        </a>
+
+        <div class="page-header">
+            <h1>LAB TUẦN 3: CẤU HÌNH, PHÁT HIỆN & KHẮC PHỤC LỖI OWASP</h1>
+            <p>Khám phá các khái niệm cơ bản về bảo mật web và các lỗ hổng phổ biến</p>
+        </div>
+
+        <!-- HTTP/HTTPS Section -->
+        <div class="content-section">
+            <h2><i class="fas fa-lock"></i> 1. HTTP, HTTPS và TLS</h2>
+            <div class="grid">
+                <div class="img-container">
+                    <img src="https://cdn.prod.website-files.com/64555bfdcb110dbf3e9e04bd/646cf41e9c60c23fcea5be7a_HTTP-vs-HTTPS.png" alt="So sánh HTTP và HTTPS">
+                    <p class="img-caption">So sánh giao tiếp HTTP (trái) và HTTPS (phải)</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://cheapsslsecurity.com/blog/wp-content/uploads/2017/10/ssl-tls-handshake-process-1024x670.png" alt="Quy trình bắt tay TLS">
+                    <p class="img-caption">Quy trình bắt tay TLS thiết lập kết nối an toàn</p>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-info-circle"></i> HTTP là gì?</h3>
+            <p>HTTP (HyperText Transfer Protocol) là giao thức dùng để truyền dữ liệu giữa:</p>
+            <ul>
+                <li>Trình duyệt (Client)</li>
+                <li>Máy chủ web (Server)</li>
+            </ul>
+            
+            <div class="card risk-card">
+                <h4>Nhược điểm:</h4>
+                <ul>
+                    <li>Dữ liệu truyền ở dạng plaintext</li>
+                    <li>Dễ bị nghe lén, sửa đổi, giả mạo (Man-in-the-Middle)</li>
+                </ul>
+            </div>
+
+            <h3><i class="fas fa-shield-alt"></i> HTTPS là gì?</h3>
+            <p>HTTPS (HTTP Secure) là phiên bản bảo mật của HTTP, sử dụng TLS/SSL để mã hóa dữ liệu.</p>
+            <p>HTTPS đảm bảo:</p>
+            <ul>
+                <li><strong>Bí mật (Confidentiality):</strong> dữ liệu được mã hóa</li>
+                <li><strong>Toàn vẹn (Integrity):</strong> dữ liệu không bị thay đổi</li>
+                <li><strong>Xác thực (Authentication):</strong> xác minh máy chủ</li>
+            </ul>
+
+            <h3><i class="fas fa-key"></i> TLS là gì?</h3>
+            <p>TLS (Transport Layer Security) là giao thức mã hóa:</p>
+            <ul>
+                <li>Bảo vệ dữ liệu truyền trên mạng</li>
+                <li>Được dùng bởi HTTPS, SMTP, FTPS,…</li>
+            </ul>
+        </div>
+
+        <!-- HTTP Security Headers Section -->
+        <div class="content-section">
+            <h2><i class="fas fa-shield-virus"></i> HTTP Security Headers</h2>
+            <div class="content-row">
+                <div class="content-text">
+                    <p>HTTP Security Headers cung cấp một lớp bảo mật bổ sung cho các ứng dụng web bằng cách kiểm soát cách trình duyệt xử lý nội dung và tương tác với trang web.</p>
+                    <div class="card" style="margin-top: 1rem;">
+                        <p><i class="fas fa-shield-alt"></i> <strong>Ví dụ:</strong> Content-Security-Policy, X-Content-Type-Options, X-Frame-Options, v.v.</p>
+                    </div>
+                </div>
+                <div class="img-container">
+                    <img src="D:\ATDTDM\atdtdm\Screenshot 2026-01-10 001925.png" alt="Minh họa HTTP Security Headers" style="max-height: 300px; width: auto;">
+                    <p class="img-caption">Các HTTP Security Headers bảo vệ ứng dụng web</p>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-info-circle"></i> Khái niệm</h3>
+            <p>HTTP Security Headers là các header trong phản hồi HTTP giúp:</p>
+            <ul>
+                <li>Tăng cường bảo mật trình duyệt</li>
+                <li>Ngăn chặn các kiểu tấn công phổ biến (XSS, Clickjacking,…)</li>
+            </ul>
+
+            <h3><i class="fas fa-list"></i> Một số HTTP Security Headers quan trọng</h3>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Header</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Strict-Transport-Security (HSTS)</strong></td>
+                            <td>Bắt buộc dùng HTTPS</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Content-Security-Policy (CSP)</strong></td>
+                            <td>Ngăn chặn tấn công XSS</td>
+                        </tr>
+                        <tr>
+                            <td><strong>X-Frame-Options</strong></td>
+                            <td>Chống Clickjacking</td>
+                        </tr>
+                        <tr>
+                            <td><strong>X-Content-Type-Options</strong></td>
+                            <td>Ngăn MIME sniffing</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Referrer-Policy</strong></td>
+                            <td>Kiểm soát thông tin referrer</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Permissions-Policy</strong></td>
+                            <td>Giới hạn quyền trình duyệt</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- OWASP Top 10 Section -->
+        <div class="content-section">
+            <h2><i class="fas fa-bug"></i> OWASP Top 10 (2025)</h2>
+            <div class="content-row reverse">
+                <div class="content-text">
+                    <p>OWASP (Open Web Application Security Project) là một tổ chức mở chuyên về cải thiện bảo mật phần mềm, cung cấp các tài liệu, công cụ và hướng dẫn miễn phí.</p>
+                    <div class="card" style="margin-top: 1rem;">
+                        <p><i class="fas fa-exclamation-triangle"></i> <strong>OWASP Top 10</strong> liệt kê 10 lỗ hổng bảo mật web nguy hiểm nhất hiện nay.</p>
+                    </div>
+                </div>
+                <div class="img-container">
+                    <img src="https://owasp.org/assets/images/logo.png" alt="OWASP Logo" style="max-height: 200px; width: auto; margin: 0 auto; display: block;">
+                    <p class="img-caption">OWASP - Tổ chức bảo mật ứng dụng web hàng đầu thế giới</p>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-info-circle"></i> Khái niệm OWASP Top 10</h3>
+            <p>OWASP Top 10 là danh sách 10 lỗ hổng bảo mật web nghiêm trọng nhất, do tổ chức OWASP công bố.</p>
+            <p><strong>Mục đích:</strong></p>
+            <ul>
+                <li>Nâng cao nhận thức an toàn web</li>
+                <li>Làm tài liệu chuẩn cho kiểm thử bảo mật</li>
+            </ul>
+
+            <h3><i class="fas fa-list-ol"></i> OWASP Top 10 (2021)</h3>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nhóm rủi ro</th>
+                            <th>Mô tả ngắn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Broken Access Control</strong></td>
+                            <td>Người dùng vượt quyền truy cập.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Security Misconfiguration</strong></td>
+                            <td>Lỗi cấu hình server/app.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Software Supply Chain Failures</strong></td>
+                            <td>Gián đoạn bảo mật từ dependency/CI/CD.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cryptographic Failures</strong></td>
+                            <td>Sai lệch mã hóa dữ liệu.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Injection</strong></td>
+                            <td>Nhập dữ liệu độc hại vào hệ thống.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Insecure Design</strong></td>
+                            <td>Thiết kế thiếu biện pháp bảo mật.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Authentication Failures</strong></td>
+                            <td>Xác thực người dùng lỏng lẻo.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data/Software Integrity</strong></td>
+                            <td>Cấu trúc phần mềm không được bảo vệ.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Logging & Alerting Failures</strong></td>
+                            <td>Ghi nhận và cảnh báo chưa đầy đủ.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mishandling Exceptions</strong></td>
+                            <td>Xử lý lỗi sai gây lộ dữ liệu/logic.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- OWASP Juice Shop Section -->
+        <div class="content-section">
+            <h2><i class="fas fa-flask"></i> OWASP Juice Shop</h2>
+            <div class="grid">
+                <div class="content-row">
+                    <div class="content-text">
+                        <p>OWASP Juice Shop là một ứng dụng web không an toàn được thiết kế đặc biệt để thực hành các kỹ thuật bảo mật web và tìm kiếm lỗ hổng.</p>
+                        <div class="card" style="margin-top: 1rem;">
+                            <p><i class="fas fa-flask"></i> <strong>Mục đích:</strong> Học tập và thực hành bảo mật ứng dụng web trong môi trường kiểm soát.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="img-container">
+                    <img src="D:\ATDTDM\atdtdm\Screenshot 2026-01-10 002302.png" alt="OWASP Juice Shop Interface">
+                    <p class="img-caption">Giao diện cửa hàng OWASP Juice Shop</p>
+                </div>
+            </div>
+            
+            <h3><i class="fas fa-graduation-cap"></i> Vai trò trong học tập</h3>
+            <ul>
+                <li>Giúp sinh viên hiểu rõ bản chất lỗ hổng</li>
+                <li>Thực hành pentest an toàn</li>
+                <li>Liên hệ trực tiếp lý thuyết với thực tế</li>
+            </ul>
+        </div>
+
+        <!-- Risk Analysis Section -->
+        <div class="content-section">
+            <h2><i class="fas fa-shield-alt"></i> Phân tích các rủi ro OWASP Top 10</h2>
+            
+            <h3><i class="fas fa-exclamation-triangle"></i> Broken Access Control</h3>
+            <div class="card risk-card">
+                <h4>Mô tả rủi ro:</h4>
+                <p>Xảy ra khi hệ thống không kiểm soát đúng quyền truy cập, cho phép người dùng truy cập tài nguyên hoặc chức năng vượt quá quyền hạn được cấp.</p>
+                
+                <h4>Ảnh hưởng:</h4>
+                <ul>
+                    <li>Người dùng thường truy cập được trang quản trị</li>
+                    <li>Rò rỉ dữ liệu nhạy cảm</li>
+                    <li>Thay đổi hoặc xóa dữ liệu trái phép</li>
+                </ul>
+            </div>
+            
+            <div class="card solution-card">
+                <h4>Biện pháp cải thiện:</h4>
+                <ul>
+                    <li>Kiểm tra quyền truy cập ở phía server</li>
+                    <li>Áp dụng mô hình phân quyền rõ ràng (RBAC)</li>
+                    <li>Sử dụng IAM và Zero Trust để kiểm soát truy cập</li>
+                </ul>
+            </div>
+
+            <h3><i class="fas fa-cog"></i> Security Misconfiguration</h3>
+            <div class="card risk-card">
+                <h4>Mô tả rủi ro:</h4>
+                <p>Hệ thống được triển khai với cấu hình mặc định, thiếu HTTP Security Headers, bật debug hoặc mở cổng không cần thiết.</p>
+                
+                <h4>Ảnh hưởng:</h4>
+                <ul>
+                    <li>Dễ bị dò quét lỗ hổng</li>
+                    <li>Bị tấn công thông qua cấu hình sai</li>
+                    <li>Lộ thông tin hệ thống</li>
+                </ul>
+            </div>
+            
+            <div class="card solution-card">
+                <h4>Biện pháp cải thiện:</h4>
+                <ul>
+                    <li>Thiết lập HTTPS, HSTS, CSP, X-Frame-Options</li>
+                    <li>Tắt debug trên môi trường production</li>
+                    <li>Kiểm tra cấu hình định kỳ</li>
+                </ul>
+            </div>
+
+            <h3><i class="fas fa-boxes"></i> Software Supply Chain Failures</h3>
+            <div class="card risk-card">
+                <h4>Mô tả rủi ro:</h4>
+                <p>Ứng dụng sử dụng thư viện, framework hoặc dependency có lỗ hổng bảo mật.</p>
+                
+                <h4>Ảnh hưởng:</h4>
+                <ul>
+                    <li>Bị tấn công gián tiếp qua thư viện</li>
+                    <li>Chèn mã độc vào ứng dụng</li>
+                    <li>Mất kiểm soát hệ thống</li>
+                </ul>
+            </div>
+            
+            <div class="card solution-card">
+                <h4>Biện pháp cải thiện:</h4>
+                <ul>
+                    <li>Kiểm tra dependency định kỳ</li>
+                    <li>Sử dụng công cụ quét lỗ hổng</li>
+                    <li>Chỉ dùng thư viện từ nguồn tin cậy</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Cloud Implementation Section -->
+        <div class="content-section">
+            <h2><i class="fas fa-cloud"></i> Triển khai ứng dụng trên Cloud</h2>
+            <div class="content-row reverse">
+                <div class="content-text">
+                    <p>Triển khai ứng dụng trên đám mây đòi hỏi sự hiểu biết về mô hình trách nhiệm chung (Shared Responsibility Model) giữa nhà cung cấp dịch vụ đám mây và khách hàng.</p>
+                    <div class="card" style="margin-top: 1rem;">
+                        <p><i class="fas fa-cloud"></i> <strong>Lưu ý:</strong> Bảo mật luôn là trách nhiệm chung giữa nhà cung cấp đám mây và khách hàng.</p>
+                    </div>
+                </div>
+                <div class="img-container">
+                    <img src="https://netsa.vn/wp-content/uploads/2016/04/dich-vu-cloud-computing.jpg" style="max-height: 300px; width: auto;">
+                    <p class="img-caption">Triển khai ứng dụng trên đám mây</p>
+                </div>
+            </div>
+            
+            <h3><i class="fas fa-exclamation-triangle"></i> Tại sao Broken Access Control nguy hiểm hơn trên Cloud?</h3>
+            <p>So với môi trường nội bộ (on-premise), hệ thống cloud có các đặc điểm:</p>
+            <ul>
+                <li>Ứng dụng công khai trên Internet</li>
+                <li>Nhiều dịch vụ chia sẻ hạ tầng</li>
+                <li>Tài nguyên có khả năng mở rộng nhanh và tự động</li>
+            </ul>
+            
+            <div class="card risk-card">
+                <h4>Nếu xảy ra lỗi kiểm soát truy cập trên cloud:</h4>
+                <ul>
+                    <li>Kẻ tấn công không cần truy cập mạng nội bộ</li>
+                    <li>Có thể khai thác từ bất kỳ đâu</li>
+                    <li>Mức độ lan rộng nhanh hơn và khó kiểm soát hơn</li>
+                </ul>
+                <p class="mt-4"><strong>Kết luận:</strong> Trong khi môi trường nội bộ thường bị giới hạn bởi firewall và mạng LAN, cloud mở bề mặt tấn công lớn hơn.</p>
+            </div>
+
+            <h3><i class="fas fa-shield-alt"></i> Các lớp bảo vệ trên Cloud</h3>
+            
+            <div class="grid">
+                <div class="card">
+                    <h4>1. Lớp xác thực & danh tính (IAM)</h4>
+                    <ul>
+                        <li>Quản lý người dùng, vai trò và quyền truy cập</li>
+                        <li>Áp dụng nguyên tắc Least Privilege</li>
+                        <li>Hỗ trợ SSO, MFA</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>2. Zero Trust / Cloudflare Access</h4>
+                    <ul>
+                        <li>Không mặc định tin cậy bất kỳ người dùng nào</li>
+                        <li>Kiểm tra danh tính, thiết bị, vị trí</li>
+                        <li>Chỉ cho phép truy cập khi thỏa mãn chính sách</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>3. Network Security</h4>
+                    <ul>
+                        <li>WAF ngăn chặn truy cập trái phép</li>
+                        <li>Firewall giới hạn IP, quốc gia</li>
+                        <li>HTTPS/TLS bảo vệ dữ liệu truyền tải</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>4. Logging & Monitoring</h4>
+                    <ul>
+                        <li>Ghi log toàn bộ hành vi truy cập</li>
+                        <li>Phát hiện truy cập bất thường</li>
+                        <li>Cảnh báo sớm khi có dấu hiệu tấn công</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <h4>Đánh giá vai trò của Cloud trong giảm rủi ro</h4>
+                <p><strong>Cloud cung cấp:</strong></p>
+                <ul>
+                    <li>Công cụ bảo mật sẵn có và mạnh mẽ</li>
+                    <li>Khả năng triển khai bảo mật nhanh</li>
+                    <li>Giám sát và phản ứng sự cố hiệu quả</li>
+                </ul>
+                <p class="mt-3"><strong>Lưu ý quan trọng:</strong></p>
+                <ul>
+                    <li>Cloud không tự động an toàn</li>
+                    <li>Lỗi cấu hình hoặc sai sót trong kiểm soát truy cập vẫn có thể dẫn đến sự cố nghiêm trọng</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Conclusion Section -->
+        <div class="content-section" style="text-align: center; padding: 3rem 2rem;">
+            <h2>Kết luận</h2>
+            <p>Việc hiểu và áp dụng các biện pháp bảo mật web là vô cùng quan trọng trong phát triển ứng dụng hiện đại:</p>
+            
+            <div class="grid" style="text-align: left; margin-top: 2rem;">
+                <div class="card">
+                    <h4>Bảo mật giao thức</h4>
+                    <p>Luôn sử dụng HTTPS và cấu hình đúng cách các HTTP Security Headers.</p>
+                </div>
+                <div class="card">
+                    <h4>Nhận thức rủi ro</h4>
+                    <p>Hiểu rõ và phòng tránh các lỗ hổng trong OWASP Top 10.</p>
+                </div>
+                <div class="card">
+                    <h4>Bảo mật đa lớp</h4>
+                    <p>Áp dụng nhiều lớp bảo vệ khi triển khai trên Cloud.</p>
+                </div>
+                <div class="card">
+                    <h4>Cập nhật liên tục</h4>
+                    <p>Theo dõi và cập nhật thường xuyên các bản vá bảo mật.</p>
+                </div>
+            </div>
+            
+            <p style="margin-top: 2rem;">Bằng cách kết hợp các biện pháp bảo mật từ giao thức, ứng dụng đến hạ tầng, chúng ta có thể xây dựng các hệ thống an toàn và đáng tin cậy hơn.</p>
+            
+            <a href="tuan4.html" class="btn" style="margin-top: 2rem;">Tuần 4 <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
+            
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    navLinks.classList.toggle('active');
+                });
+            }
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.nav-container') && window.innerWidth <= 768) {
+                    navLinks.classList.remove('active');
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    navLinks.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

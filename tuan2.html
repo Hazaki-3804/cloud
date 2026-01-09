@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuần 2: Bảo mật trong Điện toán đám mây</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --light-bg: #f9fafb;
+            --card-bg: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --border: #e5e7eb;
+            --gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            padding-top: 100px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--gradient);
+            color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .page-header h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .page-header p { font-size: 1.25rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
+
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .content-row {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            margin: 2rem 0;
+        }
+
+        .content-text { flex: 1.2; }
+        .content-image { flex: 1; text-align: center; }
+        .content-image img { width: 100%; border-radius: 8px; box-shadow: var(--shadow); }
+
+        h2 { color: var(--primary); margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--primary-light); }
+        h3 { color: var(--primary-dark); margin: 2rem 0 1rem; display: flex; align-items: center; gap: 0.5rem; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            position: relative;
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+
+        ul li { list-style: none; position: relative; padding-left: 1.5rem; margin-bottom: 0.5rem; }
+        ul li:before { content: "•"; color: var(--primary); font-weight: bold; position: absolute; left: 0; }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .comparison-table th { background: var(--primary); color: white; padding: 1rem; text-align: left; }
+        .comparison-table td { padding: 1rem; border: 1px solid var(--border); }
+        .comparison-table tr:nth-child(even) { background: var(--light-bg); }
+
+        /* Navbar Gốc - Không thay đổi */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem; font-weight: 700; color: var(--primary);
+            text-decoration: none; display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        .nav-links { display: flex; gap: 1.5rem; }
+        .nav-links a {
+            color: var(--text); text-decoration: none; font-weight: 500;
+            padding: 0.5rem 1rem; border-radius: 6px; transition: var(--transition);
+        }
+        .nav-links a.active { color: var(--primary); font-weight: 600; }
+        .nav-links a:hover { color: var(--primary); background: rgba(79, 70, 229, 0.1); }
+
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; color: var(--primary); text-decoration: none; font-weight: 500; }
+        .btn { display: inline-block; background: var(--primary); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 500; margin-top: 1.5rem; transition: 0.3s; }
+        .btn:hover { background: var(--primary-dark); }
+
+        footer { text-align: center; padding: 3rem 2rem; background: var(--primary-dark); color: white; margin-top: 4rem; }
+
+        @media (max-width: 768px) {
+            .content-row { flex-direction: column; }
+            .container { padding: 1rem; padding-top: 80px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-users"></i>
+                <span>Nhóm 7</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="tuan1.html">Tuần 1</a>
+                <a href="tuan2.html" class="active">Tuần 2</a>
+                <a href="tuan3.html">Tuần 3</a>
+                <a href="tuan4.html">Tuần 4</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+        </a>
+
+        <div class="page-header">
+            <h1>LAB TUẦN 2: QUẢN LÝ TRUY CẬP, IAM & AN TOÀN MẠNG TRONG ĐIỆN TOÁN ĐÁM MÂY</h1>
+            <p>Khám phá các khái niệm cơ bản về bảo mật đám mây và kiểm soát truy cập</p>
+            <div style="margin-top: 1.5rem;">
+                
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-user-shield"></i> Authentication (Xác thực)</h2>
+            
+            <div class="content-row">
+                <div class="content-text">
+                    <h3><i class="fas fa-info-circle"></i> Khái niệm Authentication</h3>
+                    <p>Authentication (Xác thực) là quá trình kiểm tra danh tính của người dùng, thiết bị hoặc hệ thống trước khi cho phép truy cập.</p>
+                    <div class="card" style="margin-top: 1rem; background: #f5f3ff;">
+                        <p><strong>Authentication trả lời câu hỏi: "Bạn là ai?"</strong></p>
+                    </div>
+                    <p style="margin-top: 1rem;"><strong>Vai trò:</strong> Không phân biệt người dùng nội bộ/ngoài, mạng trong/ngoài hay thiết bị cũ/mới. Mọi thực thể đều phải được xác minh danh tính trước khi được cấp quyền.</p>
+                </div>
+                <div class="content-image">
+                    <img src="https://cdn.prod.website-files.com/5ff66329429d880392f6cba2/67b431cebc9d6ead9149381d_618e22d769a08b01dbcc8be1_mfa.png" alt="">
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 8px;">Quy trình xác thực đa lớp</p>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-key"></i> Các phương thức Authentication phổ biến</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Username / Password</h4>
+                    <p>Phương thức cơ bản nhất, yêu cầu người dùng nhập tên đăng nhập và mật khẩu.</p>
+                </div>
+                <div class="card">
+                    <h4>MFA (Multi-Factor)</h4>
+                    <p>Xác thực đa yếu tố, kết hợp mật khẩu + OTP, vân tay, hoặc khuôn mặt.</p>
+                </div>
+                <div class="card">
+                    <h4>Token / API Key</h4>
+                    <p>Sử dụng mã thông báo hoặc khóa để xác thực giữa các hệ thống tự động.</p>
+                </div>
+                <div class="card">
+                    <h4>OAuth, SSO</h4>
+                    <p>Đăng nhập một lần qua bên thứ ba uy tín (Google, Microsoft).</p>
+                </div>
+                <div class="card">
+                    <h4>Chứng chỉ số</h4>
+                    <p>Sử dụng Digital Certificates để định danh thực thể mức độ bảo mật cao.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-cogs"></i> Nguyên lý cơ bản của Zero Trust</h2>
+            <p style="margin-bottom: 1.5rem;">Mô hình Zero Trust dựa trên triết lý: <strong>"Không bao giờ tin tưởng, luôn luôn xác minh."</strong></p>
+            
+            <div class="grid">
+                <div class="card">
+                    <h4>Xác thực liên tục</h4>
+                    <ul>
+                        <li>Kiểm tra liên tục người dùng/thiết bị</li>
+                        <li>Đánh giá rủi ro theo thời gian thực</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Đặc quyền tối thiểu</h4>
+                    <ul>
+                        <li>Chỉ cấp quyền cần thiết (Least Privilege)</li>
+                        <li>Giảm thiểu thiệt hại khi bị tấn công</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Phân đoạn hệ thống</h4>
+                    <ul>
+                        <li>Chia nhỏ tài nguyên thành các vùng</li>
+                        <li>Ngăn chặn lan truyền tấn công</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Giám sát và ghi log</h4>
+                    <ul>
+                        <li>Theo dõi hành vi truy cập</li>
+                        <li>Phát hiện bất thường tức thì</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-shield-alt"></i> Phân tích an toàn và rủi ro</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <h4><i class="fas fa-lock-open"></i> Website public</h4>
+                    <ul>
+                        <li>Truy cập trái phép vào nội dung nhạy cảm</li>
+                        <li>Dễ bị tấn công DDoS và Bot quét lỗ hổng</li>
+                        <li>Lạm dụng tài nguyên không kiểm soát</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4><i class="fas fa-user-lock"></i> Website có IAM</h4>
+                    <ul>
+                        <li>Rủi ro mật khẩu yếu bị đánh cắp</li>
+                        <li>Phân quyền sai (cấp quyền quá mức)</li>
+                        <li>Thiếu kiểm soát trạng thái thiết bị</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4><i class="fas fa-user-shield"></i> Website Zero Trust</h4>
+                    <ul>
+                        <li>Xác thực đa yếu tố liên tục</li>
+                        <li>Kiểm soát chi tiết theo ngữ cảnh</li>
+                        <li>Ghi nhật ký chi tiết mọi hành vi</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 3rem;"><i class="fas fa-balance-scale-right"></i> So sánh các mô hình</h3>
+            <div style="overflow-x: auto;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Bảo mật truyền thống</th>
+                            <th>Zero Trust</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Nguyên tắc</strong></td>
+                            <td>Tin cậy nội bộ</td>
+                            <td>Không tin cậy mặc định</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Xác thực</strong></td>
+                            <td>Một lần khi đăng nhập</td>
+                            <td>Liên tục, đa yếu tố</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phân quyền</strong></td>
+                            <td>Tĩnh, theo mạng</td>
+                            <td>Động, theo ngữ cảnh & rủi ro</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Chống tấn công nội bộ</strong></td>
+                            <td>Kém hiệu quả</td>
+                            <td>Rất tốt</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+<div class="content-section">
+            <h2><i class="fas fa-id-card-alt"></i> Identity and Access Management (IAM)</h2>
+            <div class="content-row">
+                <div class="content-text">
+                    <h3><i class="fas fa-address-book"></i> Khái niệm IAM</h3>
+                    <p>IAM là hệ thống trung tâm quản lý danh tính và kiểm soát quyền truy cập vào tài nguyên cloud. Nó đảm bảo đúng người, đúng thiết bị được truy cập đúng tài nguyên vào đúng thời điểm.</p>
+                    
+                    <div class="grid" style="margin-top: 1rem;">
+                        <div class="card" style="border-left-color: var(--secondary); background: #f0fdf4;">
+                            <strong>Thành phần cốt lõi:</strong>
+                            <ul style="margin-top: 0.5rem;">
+                                <li>Authentication (Xác thực)</li>
+                                <li>Authorization (Phân quyền)</li>
+                                <li>Security Policies (Chính sách)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-image">
+                    <img src="https://trevonix.com/wp-content/uploads/2025/08/key-components-of-cloud-iam.jpg" alt="">
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 8px;">Mô hình hoạt động của IAM</p>
+                </div>
+            </div>
+            
+            <h3><i class="fas fa-shield-alt"></i> Vai trò của IAM trong Cloud</h3>
+            <div class="grid">
+                <div class="card">
+                    <i class="fas fa-users-cog fa-2x" style="color: var(--primary); margin-bottom: 1rem;"></i>
+                    <p>Quản lý tập trung người dùng, nhóm và vai trò (Roles).</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-user-check fa-2x" style="color: var(--secondary); margin-bottom: 1rem;"></i>
+                    <p>Phân quyền chi tiết (Granular Permissions) cho từng dịch vụ.</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-file-contract fa-2x" style="color: var(--accent); margin-bottom: 1rem;"></i>
+                    <p>Đảm bảo tuân thủ các chính sách bảo mật của tổ chức.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-user-secret"></i> Zero Trust Security Model</h2>
+            <div class="content-row reverse">
+                <div class="content-text">
+                    <div class="card" style="border-left: 5px solid #ef4444; background: #fef2f2; margin-bottom: 1.5rem;">
+                        <h4 style="color: #b91c1c;"><i class="fas fa-quote-left"></i> Nguyên tắc: "Never Trust, Always Verify"</h4>
+                        <p>Không tin tưởng bất kỳ ai mặc định, dù họ đang ngồi trong văn phòng hay kết nối từ xa.</p>
+                    </div>
+                    <h3>Lợi ích trong môi trường Cloud</h3>
+                    <ul>
+                        <li>Phù hợp hoàn hảo với làm việc từ xa (Remote work).</li>
+                        <li>Ngăn chặn tấn công leo thang và di chuyển ngang.</li>
+                        <li>Tăng cường khả năng hiển thị và giám sát mọi hành vi truy cập.</li>
+                    </ul>
+                </div>
+                <div class="content-image">
+                    <img src="https://www.stealthlabs.com/wp-content/uploads/2020/11/zero-trust-security-model-process.jpg" alt="">
+                    <p><small>Quy trình Zero Trust Security Model</small></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section" style="background: #f8fafc;">
+            <h2><i class="fas fa-vial"></i> Sơ đồ quy trình kiểm thử & bảo vệ</h2>
+            <div class="content-image">
+                    <img src="D:\ATDTDM\atdtdm\auth.png" alt="">
+                    <p><small>Sơ đồ minh họa</small></p>
+                </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-search-dollar"></i> Phân tích rủi ro truy cập</h2>
+            
+            <div class="grid">
+                <div class="card" style="border-left-color: #ef4444;">
+                    <h4 style="color: #b91c1c;">1. Website Public hoàn toàn</h4>
+                    <p><small>Mức độ rủi ro: <strong>Rất cao</strong></small></p>
+                    <ul style="margin-top: 10px; font-size: 0.9rem;">
+                        <li>Bất kỳ ai cũng có thể khai thác dữ liệu.</li>
+                        <li>Mục tiêu hàng đầu của Bot và Scanner.</li>
+                        <li>Dễ dàng bị đánh sập bởi tấn công DDoS.</li>
+                    </ul>
+                </div>
+                
+                <div class="card" style="border-left-color: var(--accent);">
+                    <h4 style="color: #b45309;">2. Website có IAM</h4>
+                    <p><small>Mức độ rủi ro: <strong>Trung bình</strong></small></p>
+                    <ul style="margin-top: 10px; font-size: 0.9rem;">
+                        <li>Rủi ro lộ mật khẩu hoặc chiếm đoạt tài khoản.</li>
+                        <li>Nguy cơ cấu hình sai quyền (Misconfiguration).</li>
+                        <li>Chưa kiểm soát được độ an toàn của thiết bị.</li>
+                    </ul>
+                </div>
+
+                <div class="card" style="border-left-color: var(--secondary);">
+                    <h4 style="color: #047857;">3. Website IAM + Zero Trust</h4>
+                    <p><small>Mức độ rủi ro: <strong>Thấp</strong></small></p>
+                    <ul style="margin-top: 10px; font-size: 0.9rem;">
+                        <li>Ngăn chặn tấn công nội bộ hiệu quả.</li>
+                        <li>Xác thực liên tục dựa trên ngữ cảnh (vị trí, thiết bị).</li>
+                        <li>Cô lập thiệt hại nếu một tài khoản bị lộ.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 3rem;"><i class="fas fa-project-diagram"></i> So sánh chi tiết hai mô hình</h3>
+            <div style="overflow-x: auto;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Bảo mật truyền thống</th>
+                            <th>Zero Trust (Cloud)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Khả năng mở rộng</strong></td>
+                            <td>Thấp (phụ thuộc hạ tầng vật lý)</td>
+                            <td>Cao (Linh hoạt theo Cloud)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phù hợp Cloud</strong></td>
+                            <td>Không (Khó quản lý remote)</td>
+                            <td>Có (Thiết kế riêng cho Cloud)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Chống tấn công nội bộ</strong></td>
+                            <td>Kém (Tin cậy mặc định bên trong)</td>
+                            <td>Tốt (Luôn xác minh mọi hành vi)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cấu hình</strong></td>
+                            <td>Đơn giản</td>
+                            <td>Phức tạp, cần quản lý chặt chẽ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="content-section" style="text-align: center; border-top: 4px solid var(--secondary);">
+            <h2>Kết luận</h2>
+            <p>Bằng cách kết hợp IAM với mô hình Zero Trust, các tổ chức có thể xây dựng hệ thống bảo mật mạnh mẽ, linh hoạt và hiệu quả trong môi trường đám mây hiện đại.</p>
+            <a href="tuan3.html" class="btn">Tuần 3 <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+</body>
+</html>

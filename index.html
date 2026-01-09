@@ -2,155 +2,288 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <title>Báo cáo Cloudflare Zero Trust & Cloudflare Pages</title>
+  <title>Báo cáo An toàn Điện toán đám mây – Nhóm 7</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
-:root {
-  --primary: #6366f1;
-  --secondary: #22c55e;
-  --card-bg: #ffffff;
-  --text-main: #0f172a;
-  --text-sub: #475569;
-  --radius: 18px;
-}
+    :root {
+      --primary: #4361ee;
+      --secondary: #7209b7;
+      --accent: #4cc9f0;
+      --bg: #f8faff; 
+      --text: #1e293b;
+      --muted: #64748b;
+      --card: rgba(255, 255, 255, 0.9);
+      --border: rgba(226, 232, 240, 0.8);
+      --radius: 24px;
+      --shadow: 0 10px 30px -5px rgba(67, 97, 238, 0.1);
+      --grad: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
+    }
 
-* { box-sizing: border-box; }
+    /* Hiệu ứng nền Gradient động */
+    @keyframes move { 0% { transform: translate(0,0); } 100% { transform: translate(40px, 40px); } }
+    .bg-animation {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+      background: radial-gradient(circle at 10% 20%, rgba(67, 97, 238, 0.05) 0%, transparent 50%),
+                  radial-gradient(circle at 90% 80%, rgba(114, 9, 183, 0.05) 0%, transparent 50%);
+    }
 
-body {
-  font-family: 'Outfit', sans-serif;
-  margin: 0;
-  background: linear-gradient(180deg, #f8fafc, #eef2ff);
-  color: var(--text-main);
-  line-height: 1.75;
-}
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    html { scroll-behavior: smooth; }
+    body { color: var(--text); background: var(--bg); line-height: 1.6; overflow-x: hidden; }
 
-.container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 50px 20px;
-}
+    /* ================= NAVBAR ================= */
+    header {
+      position: fixed; top: 0; width: 100%; background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(15px); border-bottom: 1px solid var(--border); z-index: 1000;
+    }
+    .nav { max-width: 1200px; margin: auto; padding: 1.2rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-weight: 800; font-size: 1.5rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-links a { margin-left: 2rem; font-weight: 700; color: var(--muted); transition: 0.3s; }
+    .nav-links a:hover { color: var(--primary); }
 
-h1 {
-  text-align: center;
-  font-size: 40px;
-  font-weight: 700;
-  background: linear-gradient(90deg, #6366f1, #22c55e);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+    /* ================= HERO ================= */
+    .hero { padding: 12rem 2rem 8rem; text-align: center; }
+    .hero h1 { font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 800; margin-bottom: 1.5rem; letter-spacing: -2px; }
+    .hero h1 span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { max-width: 700px; margin: auto; color: var(--muted); font-size: 1.2rem; }
 
-.subtitle {
-  text-align: center;
-  color: var(--text-sub);
-  margin-bottom: 60px;
-}
+    /* ================= SECTIONS ================= */
+    section { max-width: 1200px; margin: auto; padding: 6rem 2rem; }
+    .section-title { text-align: center; margin-bottom: 4rem; }
+    .section-title h2 { font-size: 2.5rem; font-weight: 800; }
+    .section-title p { color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
 
-.section-title {
-  font-size: 28px;
-  margin: 70px 0 25px;
-  padding-left: 18px;
-  border-left: 6px solid var(--primary);
-}
+    /* ================= OVERVIEW & TEAM ================= */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+    .card { 
+      background: var(--card); padding: 3rem 2rem; border-radius: var(--radius); 
+      border: 1px solid var(--border); transition: 0.4s; text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .card:hover { transform: translateY(-10px); border-color: var(--primary); background: #fff; }
+    .card i { font-size: 2.5rem; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
+    .team-avatar { width: 100px; height: 100px; border-radius: 50%; margin-bottom: 1.5rem; border: 3px solid var(--primary); padding: 5px; }
 
-.card {
-  background: var(--card-bg);
-  padding: 28px;
-  border-radius: var(--radius);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-  margin-bottom: 45px;
-}
+    /* ================= DESIGN TIMELINE MỚI (CHUYÊN NGHIỆP) ================= */
+    .new-timeline { position: relative; max-width: 1000px; margin: auto; padding: 40px 0; }
+    
+    /* Đường line trung tâm */
+    .new-timeline::before {
+      content: ''; position: absolute; left: 50%; transform: translateX(-50%);
+      width: 4px; height: 100%; background: #e2e8f0; border-radius: 10px;
+    }
 
-.card img {
-  margin-top: 20px;
-  max-width: 100%;
-  border-radius: 14px;
-  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
-}
+    .tl-item { position: relative; width: 50%; margin-bottom: 60px; opacity: 0; transform: translateY(40px); transition: 0.8s all ease; }
+    .tl-item.show { opacity: 1; transform: translateY(0); }
+    
+    .tl-item.left { left: 0; padding-right: 50px; text-align: right; }
+    .tl-item.right { left: 50%; padding-left: 50px; text-align: left; }
 
-.vital-card {
-  background: linear-gradient(135deg,#22c55e,#4ade80);
-  color: white;
-  padding: 22px 34px;
-  border-radius: 20px;
-  font-size: 36px;
-  font-weight: 800;
-  width: fit-content;
-}
+    /* Nút thắt trên đường line */
+    .tl-dot {
+      position: absolute; top: 20px; width: 24px; height: 24px; 
+      background: white; border: 5px solid var(--primary); border-radius: 50%; z-index: 2;
+      box-shadow: 0 0 15px rgba(67, 97, 238, 0.4);
+    }
+    .left .tl-dot { right: -12px; }
+    .right .tl-dot { left: -12px; }
 
-footer {
-  text-align: center;
-  margin-top: 100px;
-  padding-top: 30px;
-  border-top: 1px dashed #c7d2fe;
-  color: #64748b;
-}
+    /* Nội dung thẻ Timeline */
+    .tl-content {
+      background: var(--card); padding: 2.5rem; border-radius: var(--radius);
+      border: 1px solid var(--border); box-shadow: var(--shadow);
+      backdrop-filter: blur(10px); position: relative; overflow: hidden;
+    }
+    .tl-content::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+      background: var(--grad);
+    }
+    .tl-content h3 { font-size: 1.5rem; margin: 10px 0; }
+    .tl-content .week-tag { font-weight: 800; color: var(--primary); font-size: 0.9rem; }
+
+    .badge-group { margin: 15px 0; }
+    .badge {
+      display: inline-block; padding: 0.4rem 0.8rem; border-radius: 10px;
+      font-size: 0.75rem; font-weight: 700; background: #f0f3ff; color: var(--primary);
+      margin: 3px; border: 1px solid var(--border);
+    }
+
+    .btn-mini {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 1rem;
+      padding: 0.8rem 1.5rem; background: var(--grad); color: white;
+      font-weight: 700; border-radius: 12px; font-size: 0.85rem;
+      box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2); transition: 0.3s;
+    }
+    .btn-mini:hover { transform: scale(1.05); box-shadow: 0 15px 25px rgba(67, 97, 238, 0.3); }
+
+    footer { text-align: center; padding: 5rem 2rem; background: white; border-top: 1px solid var(--border); }
+
+    @media (max-width: 768px) {
+      .new-timeline::before { left: 20px; }
+      .tl-item { width: 100%; text-align: left !important; padding-left: 50px !important; padding-right: 0 !important; }
+      .tl-item.right { left: 0; }
+      .tl-dot { left: 8px !important; }
+      .nav-links { display: none; }
+    }
   </style>
 </head>
-
 <body>
-<div class="container">
 
-<h1>Cloudflare Zero Trust & Cloudflare Pages</h1>
-<p class="subtitle">Báo cáo triển khai kiểm soát truy cập website theo mô hình Zero Trust</p>
+<div class="bg-animation"></div>
 
-<!-- ===== YÊU CẦU 1 ===== -->
-<h2 class="section-title">1. Kiến thức nền tảng</h2>
-<div class="card">
-  <p><b>Authentication:</b> Xác minh danh tính người dùng thông qua Google hoặc GitHub.</p>
-  <p><b>Authorization & IAM:</b> Kiểm tra quyền truy cập sau khi xác thực. Cloudflare Access đóng vai trò hệ thống IAM.</p>
-  <p><b>Zero Trust:</b> “Never trust, always verify” – mọi yêu cầu đều phải kiểm tra.</p>
-</div>
+<header>
+  <div class="nav">
+    <div class="logo"><i class="fas fa-cloud"></i> NHÓM 7</div>
+    <div class="nav-links">
+      <a href="#overview">Tổng quan</a>
+      <a href="#team">Thành viên</a>
+      <a href="#timeline">Tiến độ</a>
+    </div>
+  </div>
+</header>
 
-<!-- ===== SƠ ĐỒ 1 ===== -->
-<h2 class="section-title">2. Sơ đồ khối kiểm soát truy cập</h2>
-<div class="card">
-  <p>Sơ đồ mô tả tổng quan các khối trong hệ thống kiểm soát truy cập.</p>
-  <img src="https://raw.githubusercontent.com/minhthu12234tgf/minhthu12234tgf.github.io/main/Cloudflare%20Zero%20Trust-2025-12-20-001810.png"
-       alt="Sơ đồ khối kiểm soát truy cập">
-</div>
+<section class="hero">
+  <h1><span>AN TOÀN ĐIỆN TOÁN ĐÁM MÂY</span></h1>
+  <p>Báo cáo tiến độ thực hành theo các tuần</p>
+</section>
 
-<!-- ===== SƠ ĐỒ 2 ===== -->
-<h2 class="section-title">3. Sơ đồ trình tự xử lý truy cập</h2>
-<div class="card">
-  <p>Sơ đồ thể hiện luồng xử lý HTTP/HTTPS request qua Cloudflare Access.</p>
-  <img src="https://raw.githubusercontent.com/minhthu12234tgf/minhthu12234tgf.github.io/main/Cloudflare%20Access%20Zero-2025-12-20-002303.png"
-       alt="Sơ đồ trình tự xử lý truy cập">
-</div>
+<section id="overview">
+  <div class="section-title">
+    <p>Project Brief</p>
+    <h2>Tổng quan nội dung các tuần</h2>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <i class="fa-solid fa-crosshairs"></i>
+      <h3>Mục tiêu</h3>
+      <p>Nhận diện rủi ro và thực thi các lớp bảo mật đa tầng cho hạ tầng Cloud IaaS/PaaS.</p>
+    </div>
+    <div class="card">
+      <i class="fa-solid fa-microchip"></i>
+      <h3>Công nghệ</h3>
+      <p>Cloudflare WAF, OWASP, Docker Security, Prometheus & Grafana Monitoring.</p>
+    </div>
+    <div class="card">
+      <i class="fa-solid fa-user-shield"></i>
+      <h3>Cam kết</h3>
+      <p>Đảm bảo tính sẵn sàng cao và bảo mật dữ liệu tuyệt đối cho mọi ứng dụng triển khai.</p>
+    </div>
+  </div>
+</section>
 
-<!-- ===== SƠ ĐỒ 3 ===== -->
-<h2 class="section-title">4. Sơ đồ quyết định cho phép / từ chối truy cập</h2>
-<div class="card">
-  <p>Sơ đồ thể hiện các nhánh quyết định dựa trên trạng thái xác thực và quyền.</p>
-  <img src="https://raw.githubusercontent.com/minhthu12234tgf/minhthu12234tgf.github.io/main/Untitled%20diagram-2025-12-20-002906.png"
-       alt="Sơ đồ quyết định truy cập">
-</div>
+<section id="team">
+  <div class="section-title">
+    <p>The Team</p>
+    <h2>Thành viên thực hiện</h2>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=A" class="team-avatar">
+      <div class="week-tag">Leader</div>
+      <h3>Trịnh Khắc Nhựt</h3>
+      <p class="muted">Phụ trách tổng thể</p>
+    </div>
+    <div class="card">
+      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=B" class="team-avatar">
+      <div class="week-tag">Researcher</div>
+      <h3>Trương Minh Thư</h3>
+      <p class="muted">Phụ trách tìm kiếm nội dung.</p>
+    </div>
+    <div class="card">
+      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=C" class="team-avatar">
+      <div class="week-tag">Researcher</div>
+      <h3>Nguyễn Ngọc Hưởng</h3>
+      <p class="muted">Phụ trách tìm kiếm nội dung.</p>
+    </div>
+  </div>
+</section>
 
-<!-- ===== SƠ ĐỒ 4 ===== -->
-<h2 class="section-title">5. Sơ đồ thành phần tham gia</h2>
-<div class="card">
-  <p>Sơ đồ thể hiện các thành phần: User, Cloudflare Access, IdP, Cloudflare Pages.</p>
-  <img src="https://raw.githubusercontent.com/minhthu12234tgf/minhthu12234tgf.github.io/main/sodo4.png"
-       alt="Sơ đồ thành phần hệ thống">
-</div>
+<section id="timeline">
+  <div class="section-title">
+    <p>Roadmap</p>
+    <h2>Tiến độ hằng tuần</h2>
+  </div>
 
-<!-- ===== SSL ===== -->
-<h2 class="section-title">6. Đánh giá bảo mật SSL</h2>
-<div class="card">
-  <p>Website được đánh giá bằng công cụ SSL Labs (Qualys):</p>
-  <div class="vital-card">A</div>
+  <div class="new-timeline">
+    <div class="tl-item left">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <span class="week-tag">Tuần 1</span>
+        <h3>An toàn điện toán đám mây</h3>
+        <div class="badge-group">
+          <span class="badge">Architecture</span>
+          <span class="badge">Model</span>
+        </div>
+        <p>Tìm hiểu các khái niệm cốt lõi và mô hình dịch vụ đám mây phổ biến.</p>
+        <a href="tuan1.html" class="btn-mini">Chi tiết báo cáo <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
 
-  <img src="https://raw.githubusercontent.com/minhthu12234tgf/minhthu12234tgf.github.io/main/hinhdanhgia.png"
-       alt="Kết quả đánh giá SSL Labs">
-</div>
+    <div class="tl-item right">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <span class="week-tag">Tuần 2</span>
+        <h3>Quản lý truy cập, IAM & An toàn trong điện toán đám mây</h3>
+        <div class="badge-group">
+          <span class="badge">Deploy</span>
+          <span class="badge">CDN</span>
+        </div>
+        <p>Thực hành đưa ứng dụng lên môi trường thực tế và tối ưu hóa phân phối.</p>
+        <a href="tuan2.html" class="btn-mini">Chi tiết báo cáo <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
+    <div class="tl-item left">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <span class="week-tag">Tuần 3</span>
+        <h3>Cấu hình, phát hiện & khắc phục lỗi OWASP</h3>
+        <div class="badge-group">
+          <span class="badge">Pen-test</span>
+          <span class="badge">Shield</span>
+        </div>
+        <p>Chống lại các cuộc tấn công phổ biến như SQLi, XSS,... trên OWASP.</p>
+        <a href="tuan3.html" class="btn-mini">Chi tiết báo cáo <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
+    <div class="tl-item right">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <span class="week-tag">Tuần 4</span>
+        <h3>Giám sát, nhật ký và phát hiện bất thường</h3>
+        <div class="badge-group">
+          <span class="badge">Monitoring</span>
+          <span class="badge">Metrics</span>
+        </div>
+        <p>Tìm hiểu về Monitoring và Log trong điện toán đám mây.</p>
+        <a href="tuan4.html" class="btn-mini">Chi tiết báo cáo <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
 
 <footer>
-© 2025 — Cloudflare Zero Trust Report
+  <p style="font-weight: 800; font-size: 1.2rem; color: #1e293b;"><i class="fas fa-users"></i> NHÓM 7</p>
+  <p style="margin-top: 10px; color: var(--muted);">© 2025 Báo cáo nội dung các tuần môn An toàn Điện toán đám mây</p>
 </footer>
 
-</div>
+
+
+<script>
+  // Animation khi cuộn trang
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('show');
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.tl-item, .card').forEach(el => observer.observe(el));
+</script>
+
 </body>
 </html>

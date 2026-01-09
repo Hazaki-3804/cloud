@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuần 1: Tổng quan về Điện toán đám mây</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --light-bg: #f9fafb;
+            --card-bg: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --border: #e5e7eb;
+            --gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--light-bg); color: var(--text); line-height: 1.7; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; padding-top: 100px; }
+
+        /* Header */
+        .page-header {
+            text-align: center; margin-bottom: 3rem; padding: 3rem 2rem;
+            background: var(--gradient); color: white; border-radius: 16px; box-shadow: var(--shadow-lg);
+        }
+        .page-header h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .page-header p { font-size: 1.25rem; opacity: 0.9; max-width: 800px; margin: 0 auto; }
+
+        /* Sections */
+        .content-section {
+            background: white; border-radius: 12px; padding: 2.5rem; margin-bottom: 2rem;
+            box-shadow: var(--shadow); border: 1px solid var(--border);
+        }
+        h2 { color: var(--primary); margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--primary-light); display: flex; align-items: center; gap: 10px; }
+        h3 { color: var(--primary-dark); margin: 2rem 0 1rem; display: flex; align-items: center; gap: 0.5rem; }
+
+        /* Grid System */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 1.5rem 0; }
+        .card {
+            background: var(--card-bg); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--border);
+            transition: var(--transition); border-left: 4px solid var(--primary);
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+
+        /* --- THIẾT KẾ MỚI CHO LIST VÀ STEPS --- */
+        
+        /* Modern Icon List (Thay thế ul) */
+        .icon-list { list-style: none; padding: 0; margin: 1rem 0; }
+        .icon-list li {
+            display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;
+            padding: 8px 12px; border-radius: 8px; transition: 0.2s;
+        }
+        .icon-list li:hover { background: rgba(79, 70, 229, 0.04); }
+        .icon-list li i { color: var(--primary); margin-top: 5px; font-size: 0.9rem; }
+
+        /* Timeline Stepper (Thay thế ol) */
+        .stepper { position: relative; padding-left: 2.5rem; margin: 2rem 0; }
+        .stepper::before {
+            content: ''; position: absolute; left: 11px; top: 0; bottom: 0;
+            width: 2px; background: var(--border);
+        }
+        .step-item { position: relative; margin-bottom: 2rem; }
+        .step-number {
+            position: absolute; left: -2.5rem; top: 0;
+            width: 24px; height: 24px; background: var(--primary);
+            color: white; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 0.8rem;
+            font-weight: bold; z-index: 2; border: 4px solid white;
+        }
+        .step-content { background: var(--light-bg); padding: 1rem 1.5rem; border-radius: 10px; border: 1px solid var(--border); }
+        .step-content strong { color: var(--primary-dark); display: block; margin-bottom: 5px; }
+        
+        /* Sub-steps inside stepper */
+        .sub-steps { margin-top: 10px; border-left: 2px dashed var(--primary-light); padding-left: 15px; font-size: 0.95rem; }
+
+        /* ------------------------------------- */
+
+        .content-row { display: flex; gap: 2rem; align-items: center; margin: 2rem 0; }
+        .content-row.reverse { flex-direction: row-reverse; }
+        .content-text, .content-image { flex: 1; }
+        .content-image img { width: 100%; border-radius: 12px; box-shadow: var(--shadow); }
+
+        /* Navbar Gốc */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: var(--nav-bg); backdrop-filter: blur(10px);
+            box-shadow: var(--shadow); z-index: 1000; padding: 1rem 2rem; border-bottom: 1px solid var(--border);
+        }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .nav-links { display: flex; gap: 1.5rem; }
+        .nav-links a { color: var(--text); text-decoration: none; font-weight: 500; padding: 0.5rem 1rem; border-radius: 6px; transition: var(--transition); }
+        .nav-links a.active { color: var(--primary); font-weight: 600; }
+        .nav-links a:hover { color: var(--primary); background: rgba(79, 70, 229, 0.1); }
+
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; color: var(--primary); text-decoration: none; font-weight: 500; }
+        .btn { display: inline-block; background: var(--primary); color: white; padding: 1rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 600; transition: var(--transition); box-shadow: var(--shadow); }
+        .btn:hover { background: var(--primary-dark); transform: scale(1.05); }
+
+        footer { text-align: center; padding: 3rem 2rem; background: var(--primary-dark); color: white; margin-top: 4rem; }
+
+        @media (max-width: 768px) {
+            .content-row, .content-row.reverse { flex-direction: column; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-users"></i>
+                <span>Nhóm 7</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="tuan1.html" class="active">Tuần 1</a>
+                <a href="tuan2.html">Tuần 2</a>
+                <a href="tuan3.html">Tuần 3</a>
+                <a href="tuan4.html">Tuần 4</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+        </a>
+
+        <div class="page-header">
+            <h1>LAB TUẦN 1: AN TOÀN ĐIỆN TOÁN ĐÁM MÂY</h1>
+            <p>Khám phá các khái niệm cơ bản, kiến trúc và mô hình dịch vụ của điện toán đám mây</p>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-cloud"></i> Cloud Computing là gì?</h2>
+            <div class="content-row">
+                <div class="content-text">
+                    <p>Cloud Computing (Điện toán đám mây) là mô hình cung cấp tài nguyên CNTT (máy chủ, lưu trữ, cơ sở dữ liệu, mạng, phần mềm,…) thông qua Internet, thay vì phải cài đặt và quản lý trực tiếp trên máy tính cá nhân hay máy chủ vật lý.</p>
+                    <div class="card" style="background: #f5f3ff; border-left-color: var(--accent);">
+                        <p><i class="fas fa-lightbulb" style="color: var(--accent);"></i> <strong>Ví dụ phổ biến:</strong> Google Drive, AWS, Microsoft Azure, Cloudflare,…</p>
+                    </div>
+                </div>
+                <div class="content-image">
+                    <img src="https://platinumdatarecovery.com/wp-content/uploads/2023/05/cloud-computing-diagram.webp" alt="Cloud">
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-sitemap"></i> Kiến trúc Cloud Computing cơ bản</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-laptop"></i> Frontend (Client)</h3>
+                    <ul class="icon-list">
+                        <li><i class="fas fa-check-circle"></i> Trình duyệt web</li>
+                        <li><i class="fas fa-check-circle"></i> Ứng dụng di động</li>
+                        <li><i class="fas fa-check-circle"></i> Phần mềm client</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-server"></i> Backend (Cloud Provider)</h3>
+                    <ul class="icon-list">
+                        <li><i class="fas fa-check-circle"></i> Máy chủ (Server)</li>
+                        <li><i class="fas fa-check-circle"></i> Lưu trữ (Storage)</li>
+                        <li><i class="fas fa-check-circle"></i> Cơ sở dữ liệu</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-network-wired"></i> Network (Internet)</h3>
+                    <p>Kết nối không dây hoặc có dây đóng vai trò cầu nối dữ liệu giữa người dùng và hệ thống cloud.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-layer-group"></i> Các mô hình dịch vụ Cloud</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>IaaS</h3>
+                    <p>Cung cấp hạ tầng: máy ảo, mạng, ổ cứng. Người dùng tự cài hệ điều hành.</p>
+                    <small><strong>Ví dụ:</strong> AWS EC2, GCE</small>
+                </div>
+                <div class="card">
+                    <h3>PaaS</h3>
+                    <p>Cung cấp nền tảng lập trình. Không cần quản lý hệ điều hành hay server.</p>
+                    <small><strong>Ví dụ:</strong> Heroku, Vercel</small>
+                </div>
+                <div class="card">
+                    <h3>SaaS</h3>
+                    <p>Phần mềm hoàn chỉnh. Người dùng chỉ sử dụng trực tiếp qua web/app.</p>
+                    <small><strong>Ví dụ:</strong> Gmail, Microsoft 365</small>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; background: #f0fdf4; padding: 1.5rem; border-radius: 12px; border: 1px solid #bbf7d0;">
+                <h3><i class="fas fa-question-circle"></i> Website tĩnh thuộc mô hình nào?</h3>
+                <p>Website tĩnh thường thuộc: <strong>PaaS hoặc SaaS</strong>. Đặc điểm: Chỉ gồm HTML/CSS/JS, không xử lý logic server.</p>
+                <ul class="icon-list">
+                    <li><i class="fas fa-link"></i> <strong>Ví dụ:</strong> Cloudflare Pages, GitHub Pages, Netlify.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fab fa-cloudflare"></i> Cloudflare Pages</h2>
+            <div class="content-row reverse">
+                <div class="content-text">
+                    <h3><i class="fas fa-cogs"></i> Cơ chế hoạt động</h3>
+                    <div class="stepper">
+                        <div class="step-item">
+                            <span class="step-number">1</span>
+                            <div class="step-content">
+                                <strong>Phát triển & Push Code</strong>
+                                <p>Người dùng hoàn thiện mã nguồn và đẩy (push) lên GitHub hoặc GitLab.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-number">2</span>
+                            <div class="step-content">
+                                <strong>Cloudflare Pages xử lý</strong>
+                                <div class="sub-steps">
+                                    <p>• Tự động kéo (pull) source code mới nhất.</p>
+                                    <p>• Tự động Build (nếu dùng React, Vue, Next.js...).</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-number">3</span>
+                            <div class="step-content">
+                                <strong>Phân phối toàn cầu</strong>
+                                <div class="sub-steps">
+                                    <p>• Lưu trữ an toàn trên hạ tầng Cloudflare.</p>
+                                    <p>• Phân phối qua mạng lưới CDN toàn cầu.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="color: var(--secondary); font-weight: 600;"><i class="fas fa-sync-alt"></i> Mỗi lần cập nhật code → hệ thống tự động deploy lại ngay lập tức.</p>
+                </div>
+                <div class="content-image">
+                    <img src="https://hazmei.com/images/cloudflare-pages/personal_site_after.png" alt="Cloudflare">
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-network-wired"></i> CDN – Content Delivery Network</h2>
+            <div class="grid">
+                <div class="card" style="border-left-color: var(--secondary);">
+                    <h3>CDN là gì?</h3>
+                    <ul class="icon-list">
+                        <li><i class="fas fa-bolt"></i> Phân phối nội dung nhanh hơn đến người dùng.</li>
+                        <li><i class="fas fa-shield-alt"></i> Giảm tải đáng kể cho server gốc.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-left-color: var(--secondary);">
+                    <h3>Quy trình phân phối</h3>
+                    <div class="stepper" style="margin: 0; padding-left: 2rem;">
+                        <div class="step-item" style="margin-bottom: 10px;">
+                            <span class="step-number" style="left: -2rem;">1</span>
+                            <p style="font-size: 0.9rem;">Xác định vị trí người dùng qua IP.</p>
+                        </div>
+                        <div class="step-item" style="margin-bottom: 10px;">
+                            <span class="step-number" style="left: -2rem;">2</span>
+                            <p style="font-size: 0.9rem;">Trả dữ liệu từ máy chủ (Edge Server) gần nhất.</p>
+                        </div>
+                        <div class="step-item" style="margin-bottom: 0;">
+                            <span class="step-number" style="left: -2rem;">3</span>
+                            <p style="font-size: 0.9rem;">Lưu Cache để phục vụ cho các lần truy cập sau.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 2rem;"><i class="fas fa-shield-alt"></i> Vai trò của CDN</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Về hiệu năng</h4>
+                    <ul class="icon-list">
+                        <li><i class="fas fa-rocket"></i> Giảm độ trễ (latency).</li>
+                        <li><i class="fas fa-compress-arrows-alt"></i> Tối ưu hóa băng thông.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Về an toàn</h4>
+                    <ul class="icon-list">
+                        <li><i class="fas fa-user-shield"></i> Chống tấn công DDoS.</li>
+                        <li><i class="fas fa-lock"></i> Tích hợp sẵn WAF và SSL/TLS.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="content-section">
+            <h2><i class="fas fa-project-diagram"></i> Mô hình minh họa luồng dữ liệu</h2>
+            <div class="grid">
+                <div class="card" style="border-left-color: var(--primary);">
+                    <h3>Cấu trúc Cloud Computing</h3>
+                    <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                        <p><i class="fas fa-user"></i> User <i class="fas fa-long-arrow-alt-right"></i> <i class="fas fa-globe"></i> Internet</p>
+                        <p style="margin: 5px 0;"><i class="fas fa-arrow-down"></i></p>
+                        <p><strong>Cloud Provider</strong></p>
+                        <p style="font-size: 0.85rem; color: var(--text-light);">(Server / Storage / Database)</p>
+                    </div>
+                </div>
+                <div class="card" style="border-left-color: var(--secondary);">
+                    <h3>Cấu trúc CDN toàn cầu</h3>
+                    <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                        <p>User (VN) <i class="fas fa-arrow-right"></i> <strong>Edge Server VN</strong></p>
+                        <p>User (US) <i class="fas fa-arrow-right"></i> <strong>Edge Server US</strong></p>
+                        <p style="margin: 5px 0;"><i class="fas fa-arrow-down"></i></p>
+                        <p><i class="fas fa-database"></i> <strong>Origin Server (Gốc)</strong></p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-exclamation-triangle"></i> Rủi ro bảo mật tồn tại</h2>
+            <div class="grid">
+                <div class="card" style="border-left-color: #ef4444;">
+                    <ul class="icon-list">
+                        <li><i class="fas fa-key"></i> Lộ mã API Key / Token bí mật.</li>
+                        <li><i class="fas fa-user-slash"></i> Cấu hình sai quyền truy cập tài nguyên.</li>
+                        <li><i class="fas fa-bug"></i> Các lỗ hổng web: XSS, CSRF.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-left-color: #ef4444;">
+                    <ul class="icon-list">
+                        <li><i class="fas fa-link-slash"></i> Phụ thuộc nhà cung cấp (Vendor Lock-in).</li>
+                        <li><i class="fas fa-user-shield"></i> Tấn công vào tài khoản quản trị viên.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2><i class="fas fa-shield-virus"></i> Giải pháp bảo mật đề xuất</h2>
+            <div class="grid">
+                <div class="card" style="border-left-color: var(--secondary);">
+                    <h3>Về kỹ thuật</h3>
+                    <ul class="icon-list">
+                        <li><i class="fas fa-lock"></i> Sử dụng HTTPS và bật WAF.</li>
+                        <li><i class="fas fa-user-lock"></i> Nguyên tắc quyền hạn tối thiểu (Least Privilege).</li>
+                        <li><i class="fas fa-mobile-alt"></i> Bật xác thực đa yếu tố (MFA).</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-left-color: var(--secondary);">
+                    <h3>Về quản trị</h3>
+                    <ul class="icon-list">
+                        <li><i class="fas fa-file-medical-alt"></i> Kiểm tra log và sao lưu định kỳ.</li>
+                        <li><i class="fas fa-chalkboard-teacher"></i> Đào tạo nhận thức an toàn thông tin.</li>
+                        <li><i class="fas fa-search-plus"></i> Kiểm tra bảo mật (Pentest) định kỳ.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section" style="background: #f0fdf4;">
+            <h2 style="border-bottom-color: var(--secondary);"><i class="fas fa-rocket"></i> CÁC BƯỚC TRIỂN KHAI WEBSITE TĨNH</h2>
+            <p style="margin-bottom: 2rem;">Hướng dẫn chi tiết quy trình đưa website lên Cloudflare Pages thông qua GitHub.</p>
+            
+            <div class="stepper">
+                <div class="step-item">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Chuẩn bị tài khoản & mã nguồn</strong>
+                        <p>Tạo tài khoản GitHub và Cloudflare. Hoàn thiện bộ mã nguồn tĩnh (index.html, style.css, script.js).</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Tạo Repository trên GitHub</strong>
+                        <p>Đăng nhập GitHub, tạo một kho lưu trữ (Repository) mới ở chế độ Public và tải toàn bộ mã nguồn lên đó.</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Kết nối với Cloudflare Pages</strong>
+                        <p>Trong bảng điều khiển Cloudflare, chọn mục <strong>Pages</strong> -> <strong>Create a project</strong> -> <strong>Connect to Git</strong>.</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Cấu hình & Triển khai</strong>
+                        <div class="sub-steps">
+                            <p>• Chọn đúng Repository vừa tạo.</p>
+                            <p>• Framework preset: Chọn <strong>None</strong>.</p>
+                            <p>• Nhấn <strong>Save and Deploy</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <span class="step-number">5</span>
+                    <div class="step-content">
+                        <strong>Kiểm tra & Cập nhật</strong>
+                        <p>Truy cập vào tên miền <code>*.pages.dev</code> được cung cấp. Kể từ nay, mỗi khi bạn <strong>Commit</strong> code mới lên GitHub, Cloudflare sẽ tự động cập nhật website.</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="content-section" style="text-align: center; border-top: 4px solid var(--primary);">
+            <h2>Bạn đã sẵn sàng cho phần tiếp theo?</h2>
+            <p style="margin-bottom: 2rem;">Hãy tiếp tục khám phá kiến thức chuyên sâu về bảo mật tại Tuần 2.</p>
+            <a href="tuan2.html" class="btn">Tuần 2 <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+</body>
+</html>
