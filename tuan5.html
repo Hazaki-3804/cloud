@@ -517,112 +517,92 @@
             <p>Tìm hiểu về ứng phó sự cố (Incident Response) và tổng hợp kết quả các tuần trước, chuẩn bị cho quá trình ứng phó sự cố</p>
         </div>
 
-        <!-- Yêu cầu 1 --><section class="content-section" id="yeu-cau-1">
-            <h2 style="margin-bottom: 2rem;"><i class="fas fa-book-open"></i> Yêu cầu 1: Nghiên cứu Kiến thức về Ứng phó Sự cố (Incident Response)</h2>
+        <section class="content-section" id="yeu-cau-1">
+    <h2 style="margin-bottom: 2rem;"><i class="fas fa-book-open"></i> Yêu cầu 1: Nghiên cứu Kiến thức về Ứng phó Sự cố (Incident Response)</h2>
 
-            <div class="alert alert-info">
-                <i class="fas fa-link"></i>
-                <div>
-                    <strong>Tài liệu nghiên cứu chính:</strong>
-                    <ul style="margin: 0.5rem 0 0 0; padding-left: 1.2rem;">
-                        <li>Cloudflare: <a href="https://www.cloudflare.com/learning/security/what-is-incident-response/" target="_blank" style="color: inherit;">What is Incident Response?</a></li>
-                        <li>NIST SP 800-61: <a href="https://www.nist.gov/privacy-framework/nist-incident-response" target="_blank" style="color: inherit;">Computer Security Incident Handling Guide</a></li>
-                    </ul>
-                </div>
-            </div>
+    <div class="alert alert-info">
+        <i class="fas fa-link"></i>
+        <div>
+            <strong>Tài liệu nghiên cứu chính:</strong>
+            <ul style="margin: 0.5rem 0 0 0; padding-left: 1.2rem;">
+                <li>Cloudflare: <a href="https://128884.fs1.hubspotusercontent-na1.net/hubfs/128884/blog/Incident%20Response%20Methodology.png" target="_blank" style="color: inherit;">What is Incident Response?</a></li>
+                <li>NIST SP 800-61: <a href="https://www.collidu.com/media/catalog/product/img/9/d/9de3dfee6bc2a393f722f0bddc7a8a421e338bce72c3cd265cd8b172196c764d/incident-response-plan-slide1.png" target="_blank" style="color: inherit;">Computer Security Incident Handling Guide</a></li>
+            </ul>
+        </div>
+    </div>
 
-            <div class="grid">
-                <div class="card">
-                    <h3><i class="fas fa-info-circle"></i> Khái niệm & Nội dung</h3>
-                    <p><strong>Incident Response (IR)</strong> là một thuật ngữ công nghệ thông tin dùng để mô tả quá trình một tổ chức xử lý sự cố an ninh mạng, bao gồm các vi phạm dữ liệu và các cuộc tấn công mạng.</p>
-                    <p>Nội dung của IR không chỉ là kỹ thuật mà còn bao gồm các quy trình, chính sách và kế hoạch (Incident Response Plan - IRP) nhằm giảm thiểu thiệt hại, phục hồi hệ thống và rút kinh nghiệm để ngăn chặn trong tương lai.</p>
-                </div>
-                <div class="card" style="border-left: 4px solid var(--secondary);">
-                    <h3><i class="fas fa-cloud"></i> Vai trò trong Cloud</h3>
-                    <p>Trong môi trường Điện toán đám mây, IR đóng vai trò cực kỳ quan trọng do:</p>
-                    <ul>
-                        <li><strong>Mô hình trách nhiệm chung:</strong> Khách hàng phải tự quản lý IR cho dữ liệu và cấu hình của mình trên đám mây.</li>
-                        <li><strong>Tốc độ lan truyền:</strong> Sự cố trên Cloud có thể lan rộng nhanh chóng tới các vùng (Region) khác nhau.</li>
-                        <li><strong>Tính phức tạp:</strong> Đòi hỏi sự phối hợp chặt chẽ giữa đội ngũ IT nội bộ và nhà cung cấp dịch vụ (AWS, Azure, GCP).</li>
-                    </ul>
-                </div>
-            </div>
+    <div style="display: flex; align-items: center; gap: 2rem; margin-bottom: 3rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+            <h3><i class="fas fa-info-circle"></i> 1. Khái niệm & Nội dung</h3>
+            <p><strong>Incident Response (IR)</strong> là một quá trình có cấu trúc mà một tổ chức sử dụng để xác định, phản ứng và quản lý các sự cố an ninh mạng. Mục tiêu là hạn chế thiệt hại và giảm thời gian/chi phí phục hồi.</p>
+        </div>
+        <div style="flex: 1; min-width: 300px; text-align: center;">
+            <img src="https://www.cloudflare.com/learning/security/incident-response-lifecycle.png" alt="Incident Response Concept" style="width: 100%; border-radius: 12px; box-shadow: var(--shadow);">
+            <p class="img-caption">Mô hình khái quát về ứng phó sự cố</p>
+        </div>
+    </div>
 
-            <div style="margin-top: 2.5rem;">
-                <h3><i class="fas fa-exclamation-triangle"></i> Dấu hiệu & Phân loại sự cố</h3>
-                <div class="grid">
-                    <div class="card">
-                        <h4><i class="fas fa-bell"></i> Dấu hiệu nhận biết</h4>
-                        <ul>
-                            <li>Xuất hiện lưu lượng mạng tăng đột biến bất thường.</li>
-                            <li>Tài khoản quản trị đăng nhập từ vị trí địa lý lạ (IP lạ).</li>
-                            <li>Hệ thống phản hồi chậm hoặc bị treo liên tục.</li>
-                            <li>Các tệp tin hệ thống bị thay đổi nội dung hoặc bị mã hóa.</li>
-                            <li>Cảnh báo từ hệ thống IDS/IPS hoặc công cụ Monitoring.</li>
-                        </ul>
-                    </div>
-                    <div class="card">
-                        <h4><i class="fas fa-list-ul"></i> Phân loại sự cố phổ biến</h4>
-                        <ul>
-                            <li><strong>Lộ tài khoản (Credential Leak):</strong> Thông tin đăng nhập bị rò rỉ trên GitHub hoặc qua phishing.</li>
-                            <li><strong>Tấn công Brute-force:</strong> Kẻ tấn công thử hàng nghìn mật khẩu để truy cập vào các cổng SSH, RDP.</li>
-                            <li><strong>Khai thác lỗ hổng (Exploit):</strong> Tận dụng các lỗi trong mã nguồn ứng dụng (như SQL Injection, Log4j) để chiếm quyền điều khiển.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+    <div style="display: flex; align-items: center; gap: 2rem; margin-bottom: 3rem; flex-wrap: wrap-reverse;">
+        <div style="flex: 1; min-width: 300px; text-align: center;">
+            <img src="https://d1.awsstatic.com/security-center/Shared_Responsibility_Model_V2.59d1eccec074944402d9223212b017e08173075a.png" alt="Shared Responsibility Model" style="width: 100%; border-radius: 12px; box-shadow: var(--shadow);">
+            <p class="img-caption">Mô hình trách nhiệm chung trên Cloud</p>
+        </div>
+        <div style="flex: 1; min-width: 300px;">
+            <h3><i class="fas fa-cloud"></i> 2. Vai trò trong Cloud</h3>
+            <p>Trong môi trường đám mây, IR dựa trên <strong>Mô hình trách nhiệm chung</strong>. Nhà cung cấp (AWS/Azure) bảo vệ hạ tầng, còn bạn phải chịu trách nhiệm ứng phó sự cố liên quan đến dữ liệu và cấu hình ứng dụng của mình.</p>
+        </div>
+    </div>
 
-            <div class="alert alert-danger" style="margin-top: 2rem;">
-                <i class="fas fa-microscope" style="font-size: 2rem;"></i>
-                <div>
-                    <strong>Nếu không có Monitoring và Logging, sự cố có được phát hiện không?</strong>
-                    <p style="margin-bottom: 0;"><strong>Câu trả lời là KHÔNG (hoặc phát hiện quá muộn).</strong> Vì:</p>
-                    <ul style="margin: 0.5rem 0 0 0;">
-                        <li>Kẻ tấn công thường hoạt động "tàng hình" (Stealthy). Nếu không có ghi chép (Logs), chúng ta không có bằng chứng về việc ai đã vào hệ thống.</li>
-                        <li>Không có Monitoring, chúng ta chỉ biết hệ thống "chết" khi người dùng cuối gọi điện than phiền, lúc đó thiệt hại đã quá lớn.</li>
-                    </ul>
-                </div>
-            </div>
+    <hr style="border: 0; border-top: 1px solid var(--border); margin: 3rem 0;">
 
-            <h3 style="margin-top: 3rem;"><i class="fas fa-sync-alt"></i> Phân tích chu trình Incident Response (Theo NIST)</h3>
-            <p>Quy trình Ứng phó sự cố theo chuẩn NIST gồm 4 giai đoạn chính tạo thành một vòng lặp kín:</p>
-            
-            <div class="img-container">
+    <h3 style="text-align: center; margin-bottom: 2rem;"><i class="fas fa-sync-alt"></i> Chu trình Incident Response (Theo NIST SP 800-61)</h3>
+    
+    <div class="timeline">
+        <div class="timeline-item left">
+            <div class="timeline-content">
+                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 10px;">
+                    <i class="fas fa-tools" style="color: var(--primary); font-size: 1.5rem;"></i>
+                    <h4>1. Preparation (Chuẩn bị)</h4>
+                </div>
+                <p>Thiết lập đội ngũ CSIRT, chuẩn bị công cụ phân tích và xây dựng quy trình ứng phó chi tiết.</p>
                 
-                <p class="img-caption">Chu trình Incident Response theo NIST</p>
             </div>
+        </div>
 
-            <div class="timeline">
-                <div class="timeline-item left">
-                    <div class="timeline-content">
-                        <h4>1. Preparation (Chuẩn bị)</h4>
-                        <p>Xây dựng đội ngũ ứng phó (CSIRT), trang bị công cụ, thiết lập quy trình và đào tạo nhân viên trước khi sự cố xảy ra.</p>
-                         
-                    </div>
+        <div class="timeline-item right">
+            <div class="timeline-content">
+                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 10px;">
+                    <i class="fas fa-search-plus" style="color: var(--primary); font-size: 1.5rem;"></i>
+                    <h4>2. Detection & Analysis</h4>
                 </div>
-                <div class="timeline-item right">
-                    <div class="timeline-content">
-                        <h4>2. Detection & Analysis (Phát hiện & Phân tích)</h4>
-                        <p>Giám sát hệ thống để phát hiện dấu hiệu bất thường, xác định mức độ nghiêm trọng và phạm vi ảnh hưởng của sự cố.</p>
-                         
-                    </div>
-                </div>
-                <div class="timeline-item left">
-                    <div class="timeline-content">
-                        <h4>3. Containment, Eradication & Recovery</h4>
-                        <p><strong>Kiềm chế:</strong> Ngăn sự cố lan rộng. <br><strong>Tiêu diệt:</strong> Loại bỏ mã độc, lỗ hổng. <br><strong>Phục hồi:</strong> Đưa hệ thống trở lại hoạt động bình thường.</p>
-                         
-                    </div>
-                </div>
-                <div class="timeline-item right">
-                    <div class="timeline-content">
-                        <h4>4. Post-Incident Activity (Hậu sự cố)</h4>
-                        <p>Họp rút kinh nghiệm (Lessons Learned), lập báo cáo và cập nhật lại giai đoạn 1 (Chuẩn bị) để hệ thống mạnh mẽ hơn.</p>
-                         
-                    </div>
-                </div>
+                <p>Xác định xem sự cố có đang xảy ra hay không bằng cách phân tích logs và các cảnh báo từ hệ thống giám sát.</p>
+                
             </div>
-        </section>
+        </div>
+
+        <div class="timeline-item left">
+            <div class="timeline-content">
+                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 10px;">
+                    <i class="fas fa-shield-virus" style="color: var(--primary); font-size: 1.5rem;"></i>
+                    <h4>3. Containment & Recovery</h4>
+                </div>
+                <p>Cô lập vùng bị tấn công để ngăn lây lan, loại bỏ mã độc và đưa hệ thống hoạt động trở lại bình thường.</p>
+                
+            </div>
+        </div>
+
+        <div class="timeline-item right">
+            <div class="timeline-content">
+                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 10px;">
+                    <i class="fas fa-lightbulb" style="color: var(--primary); font-size: 1.5rem;"></i>
+                    <h4>4. Post-Incident Activity</h4>
+                </div>
+                <p>Họp rút kinh nghiệm (Lessons Learned) để cải thiện quy trình và ngăn chặn sự cố tương tự trong tương lai.</p>
+                
+            </div>
+        </div>
+    </div>
+</section>
     </div>
 
 
