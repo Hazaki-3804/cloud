@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuần 5: Ứng phó sự cố & Tổng hợp kết quả</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --light-bg: #f9fafb;
+            --card-bg: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --border: #e5e7eb;
+            --gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            padding-top: 100px;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            /* padding: 0 2rem; */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background-color: rgba(79, 70, 229, 0.1);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: var(--gradient);
+            color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==');
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+            line-height: 1.6;
+            color:#fff;
+        }
+
+        .content-section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--border);
+        }
+
+        .content-section:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--primary-light);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h3 {
+            color: var(--text);
+            margin: 2rem 0 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h3 i {
+            color: var(--accent);
+            font-size: 1.1em;
+        }
+
+        h4 {
+            color: var(--text);
+            margin: 1.5rem 0 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        ul, ol {
+            margin: 1.25rem 0 1.5rem;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            line-height: 1.7;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-light);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .alert {
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            border: 1px solid transparent;
+        }
+
+        .alert i {
+            font-size: 1.25rem;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+
+        .alert-info {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border-color: #93c5fd;
+        }
+
+        .alert-warning {
+            background-color: #fffbeb;
+            color: #92400e;
+            border-color: #fcd34d;
+        }
+
+        .alert-success {
+            background-color: #ecfdf5;
+            color: #065f46;
+            border-color: #6ee7b7;
+        }
+
+        .alert-danger {
+            background-color: #fef2f2;
+            color: #991b1b;
+            border-color: #fca5a5;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .back-btn i {
+            margin-right: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--primary-dark);
+        }
+
+        .back-btn:hover i {
+            transform: translateX(-3px);
+        }
+
+        .img-container {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .img-caption {
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        th, td {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                padding-top: 90px;
+            }
+
+            .page-header {
+                padding: 2rem 1.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: var(--primary);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            right: -17px;
+            background-color: white;
+            border: 4px solid var(--primary);
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .left {
+            left: 0;
+        }
+
+        .right {
+            left: 50%;
+        }
+
+        .left::before {
+            content: " ";
+            height: 0;
+            position: absolute;
+            top: 22px;
+            width: 0;
+            z-index: 1;
+            right: 30px;
+            border: medium solid white;
+            border-width: 10px 0 10px 10px;
+            border-color: transparent transparent transparent white;
+        }
+
+        .right::before {
+            content: " ";
+            height: 0;
+            position: absolute;
+            top: 22px;
+            width: 0;
+            z-index: 1;
+            left: 30px;
+            border: medium solid white;
+            border-width: 10px 10px 10px 0;
+            border-color: transparent white transparent transparent;
+        }
+
+        .right::after {
+            left: -16px;
+        }
+
+        .timeline-content {
+            padding: 20px 30px;
+            background-color: white;
+            position: relative;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+        }
+
+        @media screen and (max-width: 768px) {
+            .timeline::after {
+                left: 31px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+
+            .timeline-item::after {
+                left: 18px;
+            }
+
+            .left::before, .right::before {
+                left: 60px;
+                border: medium solid white;
+                border-width: 10px 10px 10px 0;
+                border-color: transparent white transparent transparent;
+            }
+
+            .right {
+                left: 0%;
+            }
+        }
+    </style>
+</head> 
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-users"></i>
+                <span>Nhóm 7</span>
+            </a>
+            <div class="nav-links">
+                <a href="tuan1.html">Tuần 1</a>
+                <a href="tuan2.html">Tuần 2</a>
+                <a href="tuan3.html">Tuần 3</a>
+                <a href="tuan4.html">Tuần 4</a>
+                <a href="tuan5.html" class="active">Tuần 5</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+        </a>
+
+        <div class="page-header">
+            <h1>LAB TUẦN 5: ỨNG PHÓ SỰ CỐ & TỔNG HỢP KẾT QUẢ AN TOÀN ĐIỆN TOÁN ĐÁM MÂY</h1>
+            <p>Tìm hiểu về ứng phó sự cố (Incident Response) và tổng hợp kết quả các tuần trước, chuẩn bị cho quá trình ứng phó sự cố</p>
+        </div>
+
+        <!-- Yêu cầu 1 --><section class="content-section" id="yeu-cau-1">
+            <h2 style="margin-bottom: 2rem;"><i class="fas fa-book-open"></i> Yêu cầu 1: Nghiên cứu Kiến thức về Ứng phó Sự cố (Incident Response)</h2>
+
+            <div class="alert alert-info">
+                <i class="fas fa-link"></i>
+                <div>
+                    <strong>Tài liệu nghiên cứu chính:</strong>
+                    <ul style="margin: 0.5rem 0 0 0; padding-left: 1.2rem;">
+                        <li>Cloudflare: <a href="https://www.cloudflare.com/learning/security/what-is-incident-response/" target="_blank" style="color: inherit;">What is Incident Response?</a></li>
+                        <li>NIST SP 800-61: <a href="https://www.nist.gov/privacy-framework/nist-incident-response" target="_blank" style="color: inherit;">Computer Security Incident Handling Guide</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-info-circle"></i> Khái niệm & Nội dung</h3>
+                    <p><strong>Incident Response (IR)</strong> là một thuật ngữ công nghệ thông tin dùng để mô tả quá trình một tổ chức xử lý sự cố an ninh mạng, bao gồm các vi phạm dữ liệu và các cuộc tấn công mạng.</p>
+                    <p>Nội dung của IR không chỉ là kỹ thuật mà còn bao gồm các quy trình, chính sách và kế hoạch (Incident Response Plan - IRP) nhằm giảm thiểu thiệt hại, phục hồi hệ thống và rút kinh nghiệm để ngăn chặn trong tương lai.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--secondary);">
+                    <h3><i class="fas fa-cloud"></i> Vai trò trong Cloud</h3>
+                    <p>Trong môi trường Điện toán đám mây, IR đóng vai trò cực kỳ quan trọng do:</p>
+                    <ul>
+                        <li><strong>Mô hình trách nhiệm chung:</strong> Khách hàng phải tự quản lý IR cho dữ liệu và cấu hình của mình trên đám mây.</li>
+                        <li><strong>Tốc độ lan truyền:</strong> Sự cố trên Cloud có thể lan rộng nhanh chóng tới các vùng (Region) khác nhau.</li>
+                        <li><strong>Tính phức tạp:</strong> Đòi hỏi sự phối hợp chặt chẽ giữa đội ngũ IT nội bộ và nhà cung cấp dịch vụ (AWS, Azure, GCP).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin-top: 2.5rem;">
+                <h3><i class="fas fa-exclamation-triangle"></i> Dấu hiệu & Phân loại sự cố</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4><i class="fas fa-bell"></i> Dấu hiệu nhận biết</h4>
+                        <ul>
+                            <li>Xuất hiện lưu lượng mạng tăng đột biến bất thường.</li>
+                            <li>Tài khoản quản trị đăng nhập từ vị trí địa lý lạ (IP lạ).</li>
+                            <li>Hệ thống phản hồi chậm hoặc bị treo liên tục.</li>
+                            <li>Các tệp tin hệ thống bị thay đổi nội dung hoặc bị mã hóa.</li>
+                            <li>Cảnh báo từ hệ thống IDS/IPS hoặc công cụ Monitoring.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4><i class="fas fa-list-ul"></i> Phân loại sự cố phổ biến</h4>
+                        <ul>
+                            <li><strong>Lộ tài khoản (Credential Leak):</strong> Thông tin đăng nhập bị rò rỉ trên GitHub hoặc qua phishing.</li>
+                            <li><strong>Tấn công Brute-force:</strong> Kẻ tấn công thử hàng nghìn mật khẩu để truy cập vào các cổng SSH, RDP.</li>
+                            <li><strong>Khai thác lỗ hổng (Exploit):</strong> Tận dụng các lỗi trong mã nguồn ứng dụng (như SQL Injection, Log4j) để chiếm quyền điều khiển.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-danger" style="margin-top: 2rem;">
+                <i class="fas fa-microscope" style="font-size: 2rem;"></i>
+                <div>
+                    <strong>Nếu không có Monitoring và Logging, sự cố có được phát hiện không?</strong>
+                    <p style="margin-bottom: 0;"><strong>Câu trả lời là KHÔNG (hoặc phát hiện quá muộn).</strong> Vì:</p>
+                    <ul style="margin: 0.5rem 0 0 0;">
+                        <li>Kẻ tấn công thường hoạt động "tàng hình" (Stealthy). Nếu không có ghi chép (Logs), chúng ta không có bằng chứng về việc ai đã vào hệ thống.</li>
+                        <li>Không có Monitoring, chúng ta chỉ biết hệ thống "chết" khi người dùng cuối gọi điện than phiền, lúc đó thiệt hại đã quá lớn.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 3rem;"><i class="fas fa-sync-alt"></i> Phân tích chu trình Incident Response (Theo NIST)</h3>
+            <p>Quy trình Ứng phó sự cố theo chuẩn NIST gồm 4 giai đoạn chính tạo thành một vòng lặp kín:</p>
+            
+            <div class="img-container">
+                
+                <p class="img-caption">Chu trình Incident Response theo NIST</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h4>1. Preparation (Chuẩn bị)</h4>
+                        <p>Xây dựng đội ngũ ứng phó (CSIRT), trang bị công cụ, thiết lập quy trình và đào tạo nhân viên trước khi sự cố xảy ra.</p>
+                         
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h4>2. Detection & Analysis (Phát hiện & Phân tích)</h4>
+                        <p>Giám sát hệ thống để phát hiện dấu hiệu bất thường, xác định mức độ nghiêm trọng và phạm vi ảnh hưởng của sự cố.</p>
+                         
+                    </div>
+                </div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h4>3. Containment, Eradication & Recovery</h4>
+                        <p><strong>Kiềm chế:</strong> Ngăn sự cố lan rộng. <br><strong>Tiêu diệt:</strong> Loại bỏ mã độc, lỗ hổng. <br><strong>Phục hồi:</strong> Đưa hệ thống trở lại hoạt động bình thường.</p>
+                         
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h4>4. Post-Incident Activity (Hậu sự cố)</h4>
+                        <p>Họp rút kinh nghiệm (Lessons Learned), lập báo cáo và cập nhật lại giai đoạn 1 (Chuẩn bị) để hệ thống mạnh mẽ hơn.</p>
+                         
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add active class to current navigation item
+        const currentLocation = location.href;
+        const menuItems = document.querySelectorAll('.nav-links a');
+        menuItems.forEach(item => {
+            if (item.href === currentLocation) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+
+        // Add animation to elements on scroll
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.card, .content-section, .img-container');
+            const windowHeight = window.innerHeight;
+            
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementPosition < windowHeight - elementVisible) {
+                    element.classList.add('animate');
+                }
+            });
+        };
+
+        // Run once on page load
+        window.addEventListener('load', animateOnScroll);
+        
+        // Run on scroll
+        window.addEventListener('scroll', animateOnScroll);
+    </script>
+</body>
+</html>
